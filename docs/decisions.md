@@ -50,10 +50,10 @@ MacBook Pro Apple M2 Pro (CPU 10 cœurs), 16 Go de RAM, macOS, navigateur à jou
 
 ### Budget
 
-| Mesure | Cible (p95) | Plafond (p99) |
-| --- | --- | --- |
-| Pas moteur, 2 000 entités | ≤ 10 ms | ≤ 14 ms |
-| Image de rendu, habitants instanciés | ≤ 16,6 ms (60 images/s) | ≤ 20 ms |
+| Mesure                               | Cible (p95)             | Plafond (p99) |
+| ------------------------------------ | ----------------------- | ------------- |
+| Pas moteur, 2 000 entités            | ≤ 10 ms                 | ≤ 14 ms       |
+| Image de rendu, habitants instanciés | ≤ 16,6 ms (60 images/s) | ≤ 20 ms       |
 
 Les 2 000 entités sont un objectif fonctionnel, pas une preuve : seule la mesure sur le matériel de référence fait foi.
 
@@ -89,19 +89,19 @@ Réduire d'abord le coût par entité (fréquence de mise à jour par priorité)
 
 ### Contenu minimal
 
-| Clé | Contenu |
-|---|---|
-| `formatVersion`, `engineVersion` | versions du schéma et du moteur |
-| `scenario` | identifiant et paramètres du scénario, graine initiale |
-| `clock` | numéro de pas, temps simulé |
-| `prng` | état complet du générateur (par flux nommé si plusieurs) |
-| `world` | lieux, réseaux, installations, topologie du silo |
-| `entities` | habitants : identités, personnalités, états, mémoires utiles |
-| `relations` | graphe social des liens significatifs |
-| `stocks` | ressources et stocks |
-| `authorities` | autorités, politiques, lois en vigueur |
-| `deferredCommands` | file des commandes différées (échéance, émetteur, charge) dans l'ordre de résolution |
-| `voice` | état de la Voix et décisions déjà enregistrées |
+| Clé                              | Contenu                                                                              |
+| -------------------------------- | ------------------------------------------------------------------------------------ |
+| `formatVersion`, `engineVersion` | versions du schéma et du moteur                                                      |
+| `scenario`                       | identifiant et paramètres du scénario, graine initiale                               |
+| `clock`                          | numéro de pas, temps simulé                                                          |
+| `prng`                           | état complet du générateur (par flux nommé si plusieurs)                             |
+| `world`                          | lieux, réseaux, installations, topologie du silo                                     |
+| `entities`                       | habitants : identités, personnalités, états, mémoires utiles                         |
+| `relations`                      | graphe social des liens significatifs                                                |
+| `stocks`                         | ressources et stocks                                                                 |
+| `authorities`                    | autorités, politiques, lois en vigueur                                               |
+| `deferredCommands`               | file des commandes différées (échéance, émetteur, charge) dans l'ordre de résolution |
+| `voice`                          | état de la Voix et décisions déjà enregistrées                                       |
 
 Hors sauvegarde : état de présentation (caméra, panneaux), recalculable.
 
@@ -125,12 +125,12 @@ Statut : retenue pour l'étape 1, à confirmer par un test de rendu instancié (
 **Industriel sobre à géométrie simplifiée** : fusion des maquettes B (industriel habité) et D (puits et
 artères), avec la lisibilité de C (volumes simples, matières mates).
 
-| Maquette | Verdict | Raison |
-|---|---|---|
+| Maquette                | Verdict                               | Raison                                                                                                      |
+| ----------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | A, coupe architecturale | Écartée comme style, gardée comme vue | Façade plate qui contredit le puits cylindrique ; sa logique de coupe devient le mode « coupe par niveau ». |
-| B, industriel habité | Retenue (matières, ambiance) | Béton, acier, lumière chaude des lieux habités contre lumière froide des locaux techniques. |
-| C, low-poly stylisé | Retenue (géométrie) | Formes simples et ombres de contact : réaliste à instancier pour 2 000 habitants. Sans l'aspect jouet. |
-| D, puits et artères | Retenue (structure) | Puits, escalier hélicoïdal et artères radiales : c'est la forme du monde (concept §3.1). |
+| B, industriel habité    | Retenue (matières, ambiance)          | Béton, acier, lumière chaude des lieux habités contre lumière froide des locaux techniques.                 |
+| C, low-poly stylisé     | Retenue (géométrie)                   | Formes simples et ombres de contact : réaliste à instancier pour 2 000 habitants. Sans l'aspect jouet.      |
+| D, puits et artères     | Retenue (structure)                   | Puits, escalier hélicoïdal et artères radiales : c'est la forme du monde (concept §3.1).                    |
 
 Règles de style :
 
@@ -148,9 +148,9 @@ Règles de style :
 1. **Orbitale autour de l'axe du puits** : rotation libre, zoom continu, montée et descente le long du
    puits. Valeur par défaut : plongée oblique d'environ 35°.
 2. **Trois niveaux d'échelle**, qui sélectionnent le niveau de détail :
-   - *Silo* : tendances et incidents, habitants en points agrégés ;
-   - *Niveau* : habitants individuels, équipements, réseaux du niveau ;
-   - *Artère* : caméra radiale au niveau du sol, jusqu'au fond de l'artère.
+   - _Silo_ : tendances et incidents, habitants en points agrégés ;
+   - _Niveau_ : habitants individuels, équipements, réseaux du niveau ;
+   - _Artère_ : caméra radiale au niveau du sol, jusqu'au fond de l'artère.
 3. **Suivi** d'un habitant : la caméra suit sans changer l'état de la simulation.
 4. **Invariant** : déplacer la caméra ne change jamais un résultat de simulation (concept §15.3). La
    caméra ne pilote que le rendu et le niveau de détail d'affichage.
@@ -189,22 +189,22 @@ Couleur toujours **doublée** d'une forme ou d'un motif : aucune information por
 Palette choisie pour rester distincte en daltonisme (deutéranopie, protanopie) ; à valider par simulation
 avant l'intégration.
 
-| Famille | Repère | Couleur | Symbole / motif |
-|---|---|---|---|
-| Réseau eau | flux, conduites | Bleu `#2E86DE` | Goutte ; flux en pointillés longs |
-| Réseau électricité | câbles, flux | Ambre `#F5A623` | Éclair ; flux en tirets courts |
-| Réseau air | conduits | Cyan clair `#7FD6E8` | Trois traits ondulés ; flux en ondes |
-| Réseau communications | liaisons | Violet `#9B6BD6` | Antenne ; flux en points |
-| Besoins (alerte) | icône au-dessus de l'habitant | Corail `#E8604C` | Pictogramme propre à chaque besoin, contour renforcé quand critique |
-| Métiers | pastille ou vêtement | Famille de teintes modérées | Initiale-glyphe du métier (texte au zoom *Niveau*) |
-| Politique (aura) | halo sur quelques habitants | Teinte par camp | Anneau plein / pointillé / double selon le camp |
-| Sélection | contour | Ambre clair `#FFD27A` | Contour épais |
-| Panne / coupure | alerte locale | Rouge `#D64545` | Triangle + barre ; flux interrompu et grisé |
+| Famille               | Repère                        | Couleur                     | Symbole / motif                                                     |
+| --------------------- | ----------------------------- | --------------------------- | ------------------------------------------------------------------- |
+| Réseau eau            | flux, conduites               | Bleu `#2E86DE`              | Goutte ; flux en pointillés longs                                   |
+| Réseau électricité    | câbles, flux                  | Ambre `#F5A623`             | Éclair ; flux en tirets courts                                      |
+| Réseau air            | conduits                      | Cyan clair `#7FD6E8`        | Trois traits ondulés ; flux en ondes                                |
+| Réseau communications | liaisons                      | Violet `#9B6BD6`            | Antenne ; flux en points                                            |
+| Besoins (alerte)      | icône au-dessus de l'habitant | Corail `#E8604C`            | Pictogramme propre à chaque besoin, contour renforcé quand critique |
+| Métiers               | pastille ou vêtement          | Famille de teintes modérées | Initiale-glyphe du métier (texte au zoom _Niveau_)                  |
+| Politique (aura)      | halo sur quelques habitants   | Teinte par camp             | Anneau plein / pointillé / double selon le camp                     |
+| Sélection             | contour                       | Ambre clair `#FFD27A`       | Contour épais                                                       |
+| Panne / coupure       | alerte locale                 | Rouge `#D64545`             | Triangle + barre ; flux interrompu et grisé                         |
 
 Règles :
 
 - Un flux **interrompu** n'est jamais animé (concept §14.2) ; il est grisé et barré.
-- Contraste texte et symboles ≥ 4,5:1 sur le fond ; taille minimale d'un symbole 12 px à l'échelle *Niveau*.
+- Contraste texte et symboles ≥ 4,5:1 sur le fond ; taille minimale d'un symbole 12 px à l'échelle _Niveau_.
 - Les réseaux ont une couleur **et** un motif de flux **et** un pictogramme ; les calques peuvent
   s'activer indépendamment.
 - Mode « contraste renforcé » prévu : couleurs remplacées par des motifs seuls.
@@ -216,7 +216,6 @@ dans ce ticket : le point de départ du ticket est confirmé sur la base des maq
 test de rendu Three.js (instances, coupe, brouillard) doit valider ou ajuster la géométrie simplifiée
 avant la fin de l'étape 1.
 
-
 ## D-SIL-05 — Géométrie du silo (§18.1)
 
 Point de départ : `maquettes/silo-escalier-central.html` (illustrative). Les cotes ci-dessous sont
@@ -225,19 +224,19 @@ Repère : axe du puits = origine ; rayons en mètres depuis l'axe.
 
 ### Cotes
 
-| Élément | Valeur | Note |
-|---|---|---|
-| Hauteur d'un niveau (plancher à plancher) | 4,2 m | dalle 0,3 m |
-| Noyau central porteur | rayon 2,65 m (Ø 5,3 m) | béton plein |
-| Escalier | rayons 2,8 à 6,7 m, largeur 3,9 m | largeur utile ≈ 3,7 m (parapets) |
-| Marches | 30 par niveau, demi-tour par niveau | contremarche 0,14 m ; giron 0,29 m (int.) / 0,50 m (ligne de marche r = 4,75) / 0,70 m (ext.) ; pente ≈ 26° (int.) / ≈ 16° (ligne de marche) / ≈ 11° (ext.) |
-| Dégagement vertical d'un tour complet | 8,4 m | 2 niveaux |
-| Passerelle palier → coursive | longueur 6,5 m (r 6,3 à 12,8), largeur 3,6 m | une par niveau, alternant 0° / 180° (demi-tour) |
-| Puits (vide libre) | rayon 12 m (Ø 24 m) | garde-corps 0,95 m |
-| Coursive annulaire | rayons 12 à 18,5 m (6,5 m), ≈ 620 m² par niveau | portes d'accès aux locaux côté paroi |
-| Paroi extérieure | rayon 18,5 m | |
-| Artère | longueur 30 m depuis la paroi, couloir 7,4 m, hauteur libre 3,2 m | fond à r = 48,5 m ; 30 m = limite d'excavation (règle de scénario, §18.1 dernier point) |
-| Local d'artère | module 6 m de façade, ≈ 5,6 × 5,1 m (≈ 29 m²), hauteur 3 m | 5 par côté, 10 par artère |
+| Élément                                   | Valeur                                                            | Note                                                                                                                                                        |
+| ----------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hauteur d'un niveau (plancher à plancher) | 4,2 m                                                             | dalle 0,3 m                                                                                                                                                 |
+| Noyau central porteur                     | rayon 2,65 m (Ø 5,3 m)                                            | béton plein                                                                                                                                                 |
+| Escalier                                  | rayons 2,8 à 6,7 m, largeur 3,9 m                                 | largeur utile ≈ 3,7 m (parapets)                                                                                                                            |
+| Marches                                   | 30 par niveau, demi-tour par niveau                               | contremarche 0,14 m ; giron 0,29 m (int.) / 0,50 m (ligne de marche r = 4,75) / 0,70 m (ext.) ; pente ≈ 26° (int.) / ≈ 16° (ligne de marche) / ≈ 11° (ext.) |
+| Dégagement vertical d'un tour complet     | 8,4 m                                                             | 2 niveaux                                                                                                                                                   |
+| Passerelle palier → coursive              | longueur 6,5 m (r 6,3 à 12,8), largeur 3,6 m                      | une par niveau, alternant 0° / 180° (demi-tour)                                                                                                             |
+| Puits (vide libre)                        | rayon 12 m (Ø 24 m)                                               | garde-corps 0,95 m                                                                                                                                          |
+| Coursive annulaire                        | rayons 12 à 18,5 m (6,5 m), ≈ 620 m² par niveau                   | portes d'accès aux locaux côté paroi                                                                                                                        |
+| Paroi extérieure                          | rayon 18,5 m                                                      |                                                                                                                                                             |
+| Artère                                    | longueur 30 m depuis la paroi, couloir 7,4 m, hauteur libre 3,2 m | fond à r = 48,5 m ; 30 m = limite d'excavation (règle de scénario, §18.1 dernier point)                                                                     |
+| Local d'artère                            | module 6 m de façade, ≈ 5,6 × 5,1 m (≈ 29 m²), hauteur 3 m        | 5 par côté, 10 par artère                                                                                                                                   |
 
 ### Niveaux et embranchements
 
@@ -254,22 +253,22 @@ Repère : axe du puits = origine ; rayons en mètres depuis l'axe.
 
 Vitesses : plat 1,3 m/s ; escalier montée 0,7 m/s, descente 0,9 m/s (le long de la ligne de marche) ; porteur chargé × 0,7.
 
-| Segment | Distance | Temps |
-|---|---|---|
-| Un niveau d'escalier (ligne de marche r = 4,75) | 15,5 m | 22 s montée, 17 s descente |
-| Passerelle | 6,5 m | 5 s |
-| Coursive, palier → artère à 90° | ≈ 24 m (r = 15,25) | ≈ 18 s (0 s si l'artère est alignée) |
-| Artère, entrée → fond | 30 m | 23 s (≈ 12 s en moyenne vers un local) |
+| Segment                                         | Distance           | Temps                                  |
+| ----------------------------------------------- | ------------------ | -------------------------------------- |
+| Un niveau d'escalier (ligne de marche r = 4,75) | 15,5 m             | 22 s montée, 17 s descente             |
+| Passerelle                                      | 6,5 m              | 5 s                                    |
+| Coursive, palier → artère à 90°                 | ≈ 24 m (r = 15,25) | ≈ 18 s (0 s si l'artère est alignée)   |
+| Artère, entrée → fond                           | 30 m               | 23 s (≈ 12 s en moyenne vers un local) |
 
 Local à local, k niveaux d'écart, cible à 4 artères (coursive ≈ 9 s en moyenne) :
 **montée ≈ 52 s + 22 s × k ; descente ≈ 52 s + 17 s × k**. Prototype à 2 artères : + ≈ 18 s.
 
-| k | Montée | Descente |
-|---|---|---|
-| 1 | 1 min 15 | 1 min 10 |
-| 6 | 3 min | 2 min 35 |
-| 12 | 5 min 15 | 4 min 15 |
-| 23 | 9 min 20 | 7 min 25 |
+| k   | Montée   | Descente |
+| --- | -------- | -------- |
+| 1   | 1 min 15 | 1 min 10 |
+| 6   | 3 min    | 2 min 35 |
+| 12  | 5 min 15 | 4 min 15 |
+| 23  | 9 min 20 | 7 min 25 |
 
 Porteur chargé (23 niveaux, montée) : ≈ 13 min. Conséquence de conception : au-delà de ≈ 6 niveaux, un trajet quotidien
 coûte plusieurs minutes dans chaque sens ; le placement des logements par rapport aux ateliers et aux services
@@ -289,13 +288,13 @@ Réf. concept §4.3, §7.1 · ticket SIL-07. Complète D-02 (pas fixe d'1 minute
 
 ### Unités et conventions de bilan
 
-| Grandeur | Unité | Nature |
-| --- | --- | --- |
-| Eau (brute, traitée) | litre (L) | Stock |
-| Nourriture | kilocalorie (kcal) ; repas = 700 kcal | Stock |
-| Puissance électrique | kilowatt (kW) | Flux instantané (production, demande, capacité) |
-| Énergie stockée | kilowattheure (kWh) | Stock |
-| Pièces détachées | unités entières par famille | Stock |
+| Grandeur             | Unité                                 | Nature                                          |
+| -------------------- | ------------------------------------- | ----------------------------------------------- |
+| Eau (brute, traitée) | litre (L)                             | Stock                                           |
+| Nourriture           | kilocalorie (kcal) ; repas = 700 kcal | Stock                                           |
+| Puissance électrique | kilowatt (kW)                         | Flux instantané (production, demande, capacité) |
+| Énergie stockée      | kilowattheure (kWh)                   | Stock                                           |
+| Pièces détachées     | unités entières par famille           | Stock                                           |
 
 - Les stocks sont des **entiers dans la plus petite sous-unité** (mL, Ws, kcal) pour éviter toute dérive de flottants et garder la reproductibilité (D-02) ; l'affichage convertit en L, kW et kWh.
 - **Bilan par pas** : `stock(t+1) = stock(t) + production − consommation − pertes`, calculé sur l'état au début du pas. Les puissances sont des **entiers en W** et l'énergie stockée est comptée en **wattsecondes (Ws)** : sur un pas de 60 s, `P W × 60 s = 60 × P Ws`, exact sans arrondi (1 kW = 60 000 Ws par pas ; 1 kWh = 3 600 000 Ws). L'affichage convertit en kW et kWh.
