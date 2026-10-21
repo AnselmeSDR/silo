@@ -7,3 +7,4 @@ docs/tickets/.po-watcher.lock
 *.tmp
 node_modules/
 dist/
+.pnpm-store/
