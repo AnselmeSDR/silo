@@ -1,0 +1,7 @@
+node_modules
+dist
+pnpm-lock.yaml
+.claude
+docs/tickets
+maquettes
+concept-simulation-silos-post-apocalyptiques.md
