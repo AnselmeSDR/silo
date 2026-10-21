@@ -11,6 +11,8 @@
 
 Réf. concept §15.4, §16.2 · ticket SIL-02.
 
+> **Note** : les vitesses de jeu et l'interpolation du rendu ci-dessous sont remplacées par D-06 (vitesses pause/×1/×10/×100 ; rendu interpolé seulement à ×1). Le reste de D-02 reste en vigueur.
+
 ### Pas et échelle de temps
 
 - Pas fixe : **1 pas = 1 minute simulée**. Le pas ne varie jamais (ni selon la vitesse de jeu, ni selon la caméra, ni selon la charge).
@@ -272,3 +274,43 @@ Local à local, k niveaux d'écart, cible à 4 artères (coursive ≈ 9 s en moy
 Porteur chargé (23 niveaux, montée) : ≈ 13 min. Conséquence de conception : au-delà de ≈ 6 niveaux, un trajet quotidien
 coûte plusieurs minutes dans chaque sens ; le placement des logements par rapport aux ateliers et aux services
 contraint donc réellement la vie du silo.
+
+## D-06 — Échelle du temps, unités de ressources et démographie initiale
+
+Réf. concept §4.3, §7.1 · ticket SIL-07. Complète D-02 (pas fixe d'1 minute simulée).
+
+### Échelle du temps
+
+- **1 jour simulé = 1 440 pas** (24 h × 60 min), 1 pas = 1 min simulée.
+- Calendrier simplifié : **1 an = 360 jours** (12 mois de 30 jours), sans bissextile ni saisons au départ. Un pas de simulation est un entier, le temps simulé en est dérivé (`jour = pas / 1440`).
+- **Vitesses de lecture** : pause, ×1, ×10, ×100. À ×1, 1 s réelle = 1 pas (1 jour simulé = 24 min réelles) ; ×10 = 10 pas/s (≈ 2,4 min par jour) ; ×100 = 100 pas/s (≈ 14 s par jour, 1 an ≈ 1 h 26).
+- La vitesse ne change que le nombre de pas par seconde réelle (D-02). Au-delà de ×100, hors jeu (essais sans affichage), le moteur tourne aussi vite que possible, sans changer le pas.
+- Le rendu n'est interpolé qu'à ×1 ; aux vitesses supérieures il affiche le dernier pas calculé.
+
+### Unités et conventions de bilan
+
+| Grandeur | Unité | Nature |
+| --- | --- | --- |
+| Eau (brute, traitée) | litre (L) | Stock |
+| Nourriture | kilocalorie (kcal) ; repas = 700 kcal | Stock |
+| Puissance électrique | kilowatt (kW) | Flux instantané (production, demande, capacité) |
+| Énergie stockée | kilowattheure (kWh) | Stock |
+| Pièces détachées | unités entières par famille | Stock |
+
+- Les stocks sont des **entiers dans la plus petite sous-unité** (mL, Ws, kcal) pour éviter toute dérive de flottants et garder la reproductibilité (D-02) ; l'affichage convertit en L, kW et kWh.
+- **Bilan par pas** : `stock(t+1) = stock(t) + production − consommation − pertes`, calculé sur l'état au début du pas. Les puissances sont des **entiers en W** et l'énergie stockée est comptée en **wattsecondes (Ws)** : sur un pas de 60 s, `P W × 60 s = 60 × P Ws`, exact sans arrondi (1 kW = 60 000 Ws par pas ; 1 kWh = 3 600 000 Ws). L'affichage convertit en kW et kWh.
+- Un stock ne descend jamais sous 0 : un prélèvement est limité à la quantité disponible, le manque est consigné (pénurie), pas reporté en dette.
+- Les stocks sont **locaux** (par réservoir, entrepôt, réfectoire) ; le bilan global n'est qu'une somme d'affichage (concept §7.1).
+- Ordres de grandeur de départ, à calibrer au prototype : eau ≈ 3 L/habitant/jour potable et cuisine (≈ 150 L/habitant/jour avec les autres usages), nourriture ≈ 2 000 kcal/habitant/jour.
+
+### Démographie initiale (étape 1)
+
+- **Population fixe : 2 000 habitants** au départ, sans naissances ni décès naturels à l'étape 1 (le renouvellement générationnel, §4.3, vient ensuite).
+- **Âges en années entières**, tirés par le PRNG selon une distribution simple à 4 classes : 0-14 ans 20 %, 15-39 ans 40 %, 40-64 ans 30 %, 65 ans et plus 10 % ; uniforme au sein d'une classe (plafond 90 ans).
+- Les habitants **vieillissent** d'un an tous les 360 jours (anniversaire dérivé de l'identifiant), sans effet de mortalité à l'étape 1.
+- Main-d'œuvre : 15-64 ans (≈ 70 %) ; les enfants et 65+ ne comptent pas comme force de travail (§5.2.2).
+- La distribution est un **paramètre de scénario** consigné dans la fiche d'expérience.
+
+### Limite
+
+Valeurs de départ, pas des vérités : calibrées par mesure au prototype, avec mise à jour de ce document.
