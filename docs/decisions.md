@@ -39,7 +39,7 @@ Hors sauvegarde : état de présentation (caméra, panneaux), recalculable.
 ### Journal
 
 - Journal d'événements en JSON Lines (`*.silo.log.jsonl`), ajout seul, une ligne par entrée : `{step, seq, type, ...}`.
-- Deux familles d'entrées : commandes d'entrée (joueur, Voix, y compris sorties d'IA à réinjecter, cf. §16) et événements causaux (cause → effet, pour le mode d'analyse, §9).
+- Deux familles d'entrées : commandes d'entrée (joueur, Voix, y compris sorties d'IA à réinjecter, cf. §16) et événements causaux (cause → effet, pour le mode d'analyse, §13.4).
 - Rejeu exact = sauvegarde initiale + journal des commandes d'entrée ; reprise rapide = sauvegarde périodique (snapshot) + journal depuis ce pas.
 - Le journal référence la sauvegarde par `scenario.seed` et une empreinte (hash) pour détecter une divergence.
 
