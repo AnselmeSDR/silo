@@ -11,6 +11,8 @@
 
 Réf. concept §15.4, §16.2 · ticket SIL-02.
 
+> **Note** : les vitesses de jeu et l'interpolation du rendu ci-dessous sont remplacées par D-03 (vitesses pause/×1/×10/×100 ; rendu interpolé seulement à ×1). Le reste de D-02 reste en vigueur.
+
 ### Pas et échelle de temps
 
 - Pas fixe : **1 pas = 1 minute simulée**. Le pas ne varie jamais (ni selon la vitesse de jeu, ni selon la caméra, ni selon la charge).
@@ -60,8 +62,8 @@ Réf. concept §4.3, §7.1 · ticket SIL-07. Complète D-02 (pas fixe d'1 minute
 | Énergie stockée | kilowattheure (kWh) | Stock |
 | Pièces détachées | unités entières par famille | Stock |
 
-- Les stocks sont des **entiers dans la plus petite sous-unité** (mL, Wh, kcal) pour éviter toute dérive de flottants et garder la reproductibilité (D-02) ; l'affichage convertit en L et kWh.
-- **Bilan par pas** : `stock(t+1) = stock(t) + production − consommation − pertes`, calculé sur l'état au début du pas. Une puissance en kW devient une énergie sur un pas par `kW × (1/60) h` = `kW / 60` kWh.
+- Les stocks sont des **entiers dans la plus petite sous-unité** (mL, Ws, kcal) pour éviter toute dérive de flottants et garder la reproductibilité (D-02) ; l'affichage convertit en L, kW et kWh.
+- **Bilan par pas** : `stock(t+1) = stock(t) + production − consommation − pertes`, calculé sur l'état au début du pas. Les puissances sont des **entiers en W** et l'énergie stockée est comptée en **wattsecondes (Ws)** : sur un pas de 60 s, `P W × 60 s = 60 × P Ws`, exact sans arrondi (1 kW = 60 000 Ws par pas ; 1 kWh = 3 600 000 Ws). L'affichage convertit en kW et kWh.
 - Un stock ne descend jamais sous 0 : un prélèvement est limité à la quantité disponible, le manque est consigné (pénurie), pas reporté en dette.
 - Les stocks sont **locaux** (par réservoir, entrepôt, réfectoire) ; le bilan global n'est qu'une somme d'affichage (concept §7.1).
 - Ordres de grandeur de départ, à calibrer au prototype : eau ≈ 3 L/habitant/jour potable et cuisine (≈ 150 L/habitant/jour avec les autres usages), nourriture ≈ 2 000 kcal/habitant/jour.
