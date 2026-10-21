@@ -8,6 +8,8 @@ maquettes (`maquettes/`), tickets suivis par po-watcher (`docs/tickets`).
 pnpm workspace TypeScript strict : `packages/engine` (moteur, sans DOM), `packages/render` (Three.js),
 `packages/tools`. Commandes : `pnpm install`, `pnpm check` (format + lint + typecheck), `pnpm lint`,
 `pnpm format`, `pnpm typecheck`. Lancer `pnpm check` avant de commiter.
+`pnpm dev` (Vite, scène Three.js vide), `pnpm build` (render + engine), `pnpm engine` (moteur sans rendu,
+après build). Three.js figé en version exacte (0.160.0, comme les maquettes).
 
 ## Git
 
