@@ -13,7 +13,7 @@ Repère : axe du puits = origine ; rayons en mètres depuis l'axe.
 | Hauteur d'un niveau (plancher à plancher) | 4,2 m | dalle 0,3 m |
 | Noyau central porteur | rayon 2,65 m (Ø 5,3 m) | béton plein |
 | Escalier | rayons 2,8 à 6,7 m, largeur 3,9 m | largeur utile ≈ 3,7 m (parapets) |
-| Marches | 30 par niveau, demi-tour par niveau | contremarche 0,14 m ; giron 0,29 m (int.) / 0,50 m (ligne de marche r = 4,75) / 0,70 m (ext.) ; pente ≈ 28° |
+| Marches | 30 par niveau, demi-tour par niveau | contremarche 0,14 m ; giron 0,29 m (int.) / 0,50 m (ligne de marche r = 4,75) / 0,70 m (ext.) ; pente ≈ 26° (int.) / ≈ 16° (ligne de marche) / ≈ 11° (ext.) |
 | Dégagement vertical d'un tour complet | 8,4 m | 2 niveaux |
 | Passerelle palier → coursive | longueur 6,5 m (r 6,3 à 12,8), largeur 3,6 m | une par niveau, alternant 0° / 180° (demi-tour) |
 | Puits (vide libre) | rayon 12 m (Ø 24 m) | garde-corps 0,95 m |
@@ -25,7 +25,7 @@ Repère : axe du puits = origine ; rayons en mètres depuis l'axe.
 ### Niveaux et embranchements
 
 - **Niveaux** : prototype **12** (≈ 50 m de profondeur), cible **24** (≈ 100 m, comme la maquette). L'escalier est
-  paramétré par le nombre de niveaux ; 48 est la valeur d'essai du moteur de rendu, pas une cible de jeu.
+  paramétré par le nombre de niveaux.
 - **Artères** : prototype **2 par niveau** (0° et 180°), cible **4** (0°, 90°, 180°, 270°). Cible : 4 × 10 = 40 locaux
   par niveau, 960 locaux pour 24 niveaux (≈ 2 habitants par local pour 2 000 habitants).
 - **Embranchements** : topologie en arbre : palier → passerelle → coursive → artère → local. Pas de liaison
