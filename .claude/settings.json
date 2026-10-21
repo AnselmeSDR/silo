@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(po-watcher:*)",
+      "Read",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "SendMessage",
+      "ListAgents"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+      "Bash(rm -r:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(nc:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.config/gh/**)",
+      "Read(~/.netrc)",
+      "Read(~/.codex/auth.json)",
+      "Read(~/.claude/.credentials.json)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)"
+    ],
+    "ask": [
+      "WebFetch",
+      "WebSearch"
+    ]
+  }
+}

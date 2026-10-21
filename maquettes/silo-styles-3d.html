@@ -1,0 +1,199 @@
+<div id="silo-style-demo" aria-label="Styles du silo">
+  <header class="silo-top"><div class="silo-brand"><span class="silo-dot"></span>SILO <strong>01</strong><span class="silo-tag">DIRECTIONS VISUELLES</span></div><label class="silo-style-label">Style <select class="silo-style-select" aria-label="Style graphique"><option value="brut">Béton brut</option><option value="model">Maquette claire</option><option value="industrial">Industriel</option><option value="illustrated">Illustré</option></select></label></header>
+  <div class="silo-style-description" aria-live="polite">Béton texturé, palette minérale et lumière naturelle.</div>
+  <div class="silo-stage">
+    <div class="silo-canvas" role="img" aria-label="Maquette 3D interactive d’un silo cylindrique, de son escalier hélicoïdal et d’un étage explorable"></div>
+    <div class="silo-loading" role="status">Construction du silo…</div>
+    <nav class="silo-views" aria-label="Point de vue"><button type="button" data-view="shaft" aria-pressed="true">Le puits</button><button type="button" data-view="floor" aria-pressed="false">L’étage</button><button type="button" data-view="artery" aria-pressed="false">Dans l’artère</button></nav>
+    <aside class="silo-level"><span class="silo-caption">ÉTAGE EXPLORÉ</span><div class="silo-level-title"><span class="silo-level-number">12</span><div><button type="button" class="silo-up" aria-label="Monter d’un niveau">↑</button><button type="button" class="silo-down" aria-label="Descendre d’un niveau">↓</button></div></div><input class="silo-level-range" type="range" min="1" max="24" value="12" aria-label="Choisir un étage"><span class="silo-level-use">Maintenance & habitat</span></aside>
+    <div class="silo-location" aria-live="polite"><span class="silo-caption">POINT DE VUE</span><div class="silo-location-name">Le grand puits</div><p class="silo-location-detail">Un escalier continu relie les 24 niveaux.</p></div>
+    <div class="silo-scale"><span class="silo-caption">RÉSEAUX</span><button type="button" class="silo-network" aria-pressed="false">Afficher les flux</button><button type="button" class="silo-pause" aria-pressed="false">Pause habitants</button></div>
+    <div class="silo-person" hidden><button class="silo-close" type="button" aria-label="Fermer la fiche">×</button><span class="silo-caption">HABITANT SÉLECTIONNÉ</span><div class="silo-person-name"></div><p class="silo-person-job"></p><span class="silo-person-state"></span></div>
+    <div class="silo-zoom"><button type="button" class="silo-zoom-in" aria-label="Zoomer">+</button><button type="button" class="silo-zoom-out" aria-label="Dézoomer">−</button></div>
+    <div class="silo-travel" hidden><button class="silo-back" type="button" aria-label="Reculer dans l’artère">←</button><label>PROFONDEUR <output class="silo-distance">0 m</output><input class="silo-travel-range" type="range" min="0" max="26" value="0" step="0.1" aria-label="Avancer dans l’artère"></label><button class="silo-forward" type="button" aria-label="Avancer dans l’artère">→</button></div>
+    <footer class="silo-help"><span class="silo-help-text">Glisser : tourner · Molette : zoomer · Clic sur un habitant : observer</span><span class="silo-live"><i></i><span class="silo-live-text">Vie illustrative</span></span></footer>
+  </div>
+</div>
+<style>
+#silo-style-demo{--s-bg:#11191b;--s-panel:#192326;--s-line:#3d4848;--s-text:#edf0e7;--s-dim:#adb9b3;--s-accent:#dfbf79;font:14px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--s-text);background:var(--s-bg);width:100%;overflow:hidden;border-radius:12px;box-sizing:border-box}
+#silo-style-demo *{box-sizing:border-box}#silo-style-demo [hidden]{display:none!important}#silo-style-demo button{font:inherit;color:inherit;cursor:pointer}#silo-style-demo button:focus-visible,#silo-style-demo input:focus-visible{outline:2px solid var(--s-accent);outline-offset:3px}#silo-style-demo .silo-top{min-height:58px;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--s-line);background:var(--s-bg)}#silo-style-demo .silo-brand{display:flex;align-items:center;gap:9px;letter-spacing:2px;font-weight:500}#silo-style-demo strong{font-weight:500;color:var(--s-accent)}#silo-style-demo .silo-dot{width:7px;height:7px;border-radius:50%;background:var(--s-accent)}#silo-style-demo .silo-tag{font-size:10px;letter-spacing:1.8px;color:var(--s-dim);border-left:1px solid var(--s-line);padding-left:16px;margin-left:8px}#silo-style-demo .silo-top-note{font-size:12px;color:var(--s-dim)}#silo-style-demo .silo-stage{position:relative;height:650px;isolation:isolate;background:#11191b}#silo-style-demo .silo-canvas{position:absolute;inset:0;touch-action:none}#silo-style-demo canvas{display:block;width:100%;height:100%}#silo-style-demo .silo-loading{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;background:var(--s-bg);z-index:8;padding:25px;text-align:center}#silo-style-demo .silo-views{position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;background:var(--s-panel);border:1px solid var(--s-line);border-radius:7px;padding:4px;gap:3px;white-space:nowrap}#silo-style-demo .silo-views button{border:0;background:transparent;padding:8px 14px;border-radius:4px;font-size:12px;color:var(--s-dim)}#silo-style-demo .silo-views button[aria-pressed=true]{background:#d7c597;color:#172025}#silo-style-demo .silo-level{position:absolute;top:100px;left:22px;width:152px;padding:15px;background:var(--s-panel);border:1px solid var(--s-line);border-radius:8px}#silo-style-demo .silo-caption{font-size:10px;letter-spacing:1.4px;color:var(--s-dim);display:block}#silo-style-demo .silo-level-title{display:flex;justify-content:space-between;align-items:center;margin:5px 0}#silo-style-demo .silo-level-number{font-size:46px;font-weight:400;line-height:1.2;color:var(--s-accent)}#silo-style-demo .silo-level-title button{display:block;background:none;border:0;padding:1px 9px;font-size:18px}#silo-style-demo input[type=range]{width:100%;accent-color:var(--s-accent)}#silo-style-demo .silo-level-use{display:block;font-size:11px;color:var(--s-dim);margin-top:9px}#silo-style-demo .silo-location{position:absolute;left:22px;bottom:74px;max-width:270px;padding:13px 15px;background:var(--s-panel);border:1px solid var(--s-line);border-radius:8px;pointer-events:none}#silo-style-demo .silo-location-name{font-size:20px;margin-top:5px}#silo-style-demo .silo-location-detail{font-size:12px;color:var(--s-dim);margin:5px 0 0}#silo-style-demo .silo-scale{position:absolute;right:20px;top:100px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;background:var(--s-panel);border:1px solid var(--s-line);border-radius:8px;padding:12px}#silo-style-demo .silo-scale button{font-size:11px;background:transparent;border:0;padding:4px 0;color:var(--s-dim)}#silo-style-demo .silo-scale button[aria-pressed=true]{color:var(--s-accent)}#silo-style-demo .silo-zoom{position:absolute;right:20px;bottom:75px;display:flex;flex-direction:column;border:1px solid var(--s-line);border-radius:6px;background:var(--s-panel)}#silo-style-demo .silo-zoom button{background:none;border:0;padding:6px 12px;font-size:20px}#silo-style-demo .silo-help{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;gap:12px;padding:14px 22px;border-top:1px solid var(--s-line);background:var(--s-bg);font-size:11px;color:var(--s-dim)}#silo-style-demo .silo-live{white-space:nowrap;display:flex;align-items:center;gap:6px}#silo-style-demo .silo-live i{width:5px;height:5px;border-radius:50%;background:#a2bf9d}#silo-style-demo .silo-travel{position:absolute;bottom:75px;left:50%;transform:translateX(-50%);background:var(--s-panel);border:1px solid var(--s-line);border-radius:8px;display:flex;gap:12px;padding:12px;align-items:center;width:330px}#silo-style-demo .silo-travel button{background:none;border:0;font-size:22px;padding:8px}#silo-style-demo .silo-travel label{flex:1;font-size:10px;letter-spacing:1px;color:var(--s-dim)}#silo-style-demo output{float:right;color:var(--s-accent)}#silo-style-demo .silo-person{position:absolute;right:20px;top:245px;background:var(--s-panel);border:1px solid var(--s-line);border-radius:8px;padding:16px;width:205px}#silo-style-demo .silo-person-name{font-size:18px;margin-top:8px}#silo-style-demo .silo-person-job{margin:4px 0 10px;color:var(--s-dim);font-size:12px}#silo-style-demo .silo-person-state{font-size:11px;color:var(--s-accent)}#silo-style-demo .silo-close{position:absolute;top:4px;right:6px;background:none;border:0;font-size:20px}
+@media(max-width:650px){#silo-style-demo .silo-top{padding:12px}#silo-style-demo .silo-top-note,#silo-style-demo .silo-tag{display:none}#silo-style-demo .silo-stage{height:600px}#silo-style-demo .silo-level{left:12px;top:78px;width:116px;padding:11px}#silo-style-demo .silo-level-number{font-size:34px}#silo-style-demo .silo-level-use{font-size:10px}#silo-style-demo .silo-views{top:14px}#silo-style-demo .silo-views button{padding:8px 10px}#silo-style-demo .silo-scale{right:12px;top:78px;padding:9px}#silo-style-demo .silo-location{left:12px;bottom:93px;max-width:210px}#silo-style-demo .silo-location-name{font-size:17px}#silo-style-demo .silo-zoom{right:12px;bottom:100px}#silo-style-demo .silo-help{padding:10px 12px;flex-direction:column;gap:5px}#silo-style-demo .silo-travel{bottom:100px;width:270px}#silo-style-demo .silo-person{top:242px;right:12px;width:180px}#silo-style-demo[data-view=artery] .silo-location{bottom:195px}#silo-style-demo[data-view=artery] .silo-zoom{display:none}}
+</style>
+<style>
+#silo-style-demo .silo-style-label{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--s-dim)}
+#silo-style-demo .silo-style-select{font:inherit;color:var(--s-text);background:var(--s-panel);border:1px solid var(--s-line);border-radius:5px;padding:7px 28px 7px 10px;max-width:180px}
+#silo-style-demo .silo-style-description{padding:9px 22px;font-size:12px;background:var(--s-panel);color:var(--s-dim);border-bottom:1px solid var(--s-line)}
+#silo-style-demo .silo-views button[aria-pressed=true]{background:var(--s-accent);color:var(--s-bg)}
+#silo-style-demo[data-style=model]{--s-bg:#eeeae1;--s-panel:#faf8f2;--s-line:#c9c5ba;--s-text:#2e393b;--s-dim:#566567;--s-accent:#58776b}
+#silo-style-demo[data-style=industrial]{--s-bg:#11171e;--s-panel:#1b242e;--s-line:#394656;--s-text:#e6e9ed;--s-dim:#b0bdcd;--s-accent:#f5b768}
+#silo-style-demo[data-style=illustrated]{--s-bg:#293540;--s-panel:#354350;--s-line:#667580;--s-text:#fff5df;--s-dim:#d4dfdd;--s-accent:#e9c275}
+@media(max-width:650px){#silo-style-demo .silo-style-description{padding:9px 12px;font-size:11px}#silo-style-demo .silo-style-label{gap:5px}#silo-style-demo .silo-style-select{max-width:160px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(()=>{
+const root=document.getElementById('silo-style-demo');
+const $=s=>root.querySelector(s);
+const loading=$('.silo-loading');
+try{
+if(!window.THREE)throw new Error('La bibliothèque 3D ne s’est pas chargée. Vérifiez la connexion puis rechargez.');
+const T=window.THREE,host=$('.silo-canvas');
+const renderer=new T.WebGLRenderer({antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));renderer.setClearColor(0x11191b);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.append(renderer.domElement);
+const scene=new T.Scene();scene.fog=new T.FogExp2(0x11191b,0.009);
+const camera=new T.PerspectiveCamera(62,1,0.08,400);
+const hemi=new T.HemisphereLight(0xe0ece4,0x43443c,1.5);scene.add(hemi);
+const key=new T.DirectionalLight(0xffe5b1,2.1);key.position.set(18,45,22);scene.add(key);
+const fill=new T.DirectionalLight(0x8eafbd,1.5);fill.position.set(-25,0,-10);scene.add(fill);
+const mat=(c,rough=0.85)=>new T.MeshStandardMaterial({color:c,roughness:rough});
+const concrete=mat(0x65726f),edge=mat(0x8a9180),metal=mat(0x303f40),dark=mat(0x253235),timber=mat(0x967b51),glass=mat(0x537c7c),blue=mat(0x4a99b3),amber=mat(0xc49a51);
+const warm=new T.MeshStandardMaterial({color:0xffd58a,emissive:0xf8bf65,emissiveIntensity:1.7});
+const cyanGlow=new T.MeshBasicMaterial({color:0x5ed8e9}),goldGlow=new T.MeshBasicMaterial({color:0xffd274});
+const roomColors=[mat(0x627c70),mat(0x747166),mat(0x596e7c)];
+const boxGeo=new T.BoxGeometry(1,1,1),sphereGeo=new T.SphereGeometry(.13,7,5),bodyGeo=new T.CylinderGeometry(.12,.16,.52,6);
+function box(parent,x,y,z,sx,sy,sz,material){const o=new T.Mesh(boxGeo,material);o.position.set(x,y,z);o.scale.set(sx,sy,sz);parent.add(o);return o;}
+function tube(parent,pts,r,m,segments){const path=new T.CatmullRomCurve3(pts);const o=new T.Mesh(new T.TubeGeometry(path,segments||Math.max(12,pts.length*2),r,5,false),m);parent.add(o);return o;}
+function label(text,color='#e0c88e',w=256){const c=document.createElement('canvas');c.width=w;c.height=96;const ctx=c.getContext('2d');ctx.fillStyle=color;ctx.textAlign='center';ctx.font='500 48px sans-serif';ctx.fillText(text,w/2,65);const texture=new T.CanvasTexture(c);const s=new T.Sprite(new T.SpriteMaterial({map:texture,depthTest:true}));s.scale.set(3.7,1.4,1);return s;}
+const FLOORS=24,H=4.2,RI=12,RO=18.5;
+const fy=n=>(12-n)*H;
+const floorGroups=[],rings=[];let floor=12,mode='shaft',distance=0,paused=false,showNetwork=false,selected=null;
+const saved=window.openai?.widgetState?.modelContent;
+if(saved&&Number.isInteger(saved.floor))floor=Math.max(1,Math.min(24,saved.floor));
+const ringGeo=new T.RingGeometry(RI,RO,72);ringGeo.rotateX(-Math.PI/2);
+const wallGeo=new T.CylinderGeometry(RO,RO,H,64,1,true,Math.PI/2,Math.PI);const wallMat=new T.MeshStandardMaterial({color:0x53615e,roughness:1,side:T.DoubleSide});
+const railCircle=new T.TorusGeometry(RI,.045,5,80,Math.PI*2);railCircle.rotateX(Math.PI/2);
+for(let n=1;n<=FLOORS;n++){
+ const g=new T.Group();g.position.y=fy(n);scene.add(g);floorGroups.push(g);
+ const ring=new T.Mesh(ringGeo,mat(n===floor?0xa09270:0x6b756e));g.add(ring);rings.push(ring);
+ const under=new T.Mesh(new T.CylinderGeometry(RO,RO,.22,64,1,true,Math.PI/2,Math.PI),edge);under.position.y=-.15;g.add(under);
+ const wall=new T.Mesh(wallGeo,wallMat);wall.position.y=H/2;g.add(wall);
+ const rail=new T.Mesh(railCircle,metal);rail.position.y=.95;g.add(rail);
+ for(let j=0;j<24;j++){const a=j/24*Math.PI*2;box(g,RI*Math.sin(a),.48,RI*Math.cos(a),.055,.96,.055,metal);}
+ for(let j=0;j<10;j++){
+  const a=(j/10)*Math.PI+Math.PI/2;const x=Math.sin(a)*17.1,z=Math.cos(a)*17.1;
+  const door=box(g,x,1.15,z,1.7,2.3,.12,dark);door.rotation.y=a;
+  const light=box(g,Math.sin(a)*16.8,2.7,Math.cos(a)*16.8,1.05,.08,.13,warm);light.rotation.y=a;
+  
+ }
+ const num=label(String(n).padStart(2,'0'));num.position.set(-8,1.8,-14);g.add(num);
+}
+// Escalier continu : une révolution complète par étage.
+const stepsPer=44,total=(FLOORS-1)*stepsPer;const steps=new T.InstancedMesh(boxGeo,metal,total);const dummy=new T.Object3D();
+const stairRadius=10.8,top=fy(1);for(let i=0;i<total;i++){const a=i/stepsPer*Math.PI*2;dummy.position.set(Math.cos(a)*stairRadius,top-i/stepsPer*H-.07,Math.sin(a)*stairRadius);dummy.rotation.set(0,-a,0);dummy.scale.set(2.25,.13,1.58);dummy.updateMatrix();steps.setMatrixAt(i,dummy.matrix);}scene.add(steps);
+for(const r of [9.65,11.92]){const pts=[];for(let i=0;i<=total;i+=2){const a=i/stepsPer*Math.PI*2;pts.push(new T.Vector3(Math.cos(a)*r,top-i/stepsPer*H+1,Math.sin(a)*r));}tube(scene,pts,.038,edge,total*2);}
+const posts=new T.InstancedMesh(boxGeo,edge,Math.ceil(total/4)*2);let pi=0;for(let i=0;i<total;i+=4){const a=i/stepsPer*Math.PI*2;for(const r of [9.65,11.92]){dummy.position.set(Math.cos(a)*r,top-i/stepsPer*H+.48,Math.sin(a)*r);dummy.rotation.set(0,0,0);dummy.scale.set(.045,1,.045);dummy.updateMatrix();posts.setMatrixAt(pi++,dummy.matrix);}}scene.add(posts);
+// Montants et canalisations verticales.
+for(let j=0;j<12;j++){const a=j/12*Math.PI*2;box(scene,Math.cos(a)*18.2,-2,Math.sin(a)*18.2,.22,103,.22,metal);}
+const network=new T.Group();scene.add(network);network.visible=false;
+for(let k=0;k<2;k++){const x=16.1+k*.5,z=-6;box(scene,x,-2,z,.16,103,.16,k?amber:blue);box(network,x,-2,z+.03,.23,103,.23,k?goldGlow:cyanGlow);}
+// Artère physique de 30 mètres, pièces latérales et toit retiré pour la lecture.
+const artery=new T.Group();scene.add(artery);const A=18.5,L=30;
+box(artery,A+L/2,-.18,0,L,.34,7.4,concrete);
+for(const side of [-1,1]){
+ box(artery,A+L/2,.05,side*3.5,L,.05,.1,amber);
+ for(let bay=0;bay<5;bay++){
+  const x=A+bay*6;
+  box(artery,x,1.6,side*3.7,.22,3.2,.25,edge);
+  box(artery,x+2.9,3.2,side*3.7,5.8,.28,.3,edge);
+  box(artery,x+4.8,1.5,side*3.7,2.2,3,.18,roomColors[(bay+(side===1?1:0))%3]);
+  const rz=side*6.4;
+  box(artery,x+2.8,-.1,rz,5.6,.2,5.1,roomColors[bay%3]);
+  box(artery,x+2.8,1.5,side*9,5.6,3,.18,concrete);
+  box(artery,x,1.5,side*6.3,.18,3,5.5,concrete);
+  if(bay%2===0){for(let b=0;b<2;b++){box(artery,x+1.8+b*2.3,.45,side*7.4,1.7,.5,2.3,metal);box(artery,x+1.8+b*2.3,.76,side*7.4,1.65,.18,2.2,glass);}}
+  else{box(artery,x+2.7,.85,side*7.2,3.5,.15,1.3,timber);for(let b=0;b<3;b++){box(artery,x+1.5+b*1.1,1.15,side*7.1,.65,.5,.65,metal);}box(artery,x+4.5,.65,side*5.4,.6,1.3,.6,amber);}
+  box(artery,x+2,2.9,side*3.5,1.9,.06,.15,warm);
+ }
+}
+for(let bay=0;bay<=5;bay++){const x=A+bay*6;box(artery,x,3.4,0,.25,.25,7.6,metal);}
+box(artery,A+L+.2,1.8,0,.6,3.9,7.5,mat(0x696b5c));
+const limit=label('30 m','#edc46d');limit.position.set(A+L-.4,2.8,0);limit.scale.set(3.5,1.3,1);artery.add(limit);
+for(let z=-3;z<=3;z+=.7){box(artery,A+L-.15,.15,z,.06,.08,.38,amber);}
+for(let k=0;k<2;k++){box(artery,A+L/2,2.9,-3.3+k*.25,L,.12,.12,k?amber:blue);box(network,A+L/2,fy(floor)+2.9,-3.3+k*.25,L,.17,.17,k?goldGlow:cyanGlow);}
+const corridorLight=new T.PointLight(0xffdfa3,55,37,2);corridorLight.position.set(A+13,3,0);artery.add(corridorLight);
+// Habitants illustratifs, sans moteur social dans cette maquette.
+const people=[],pickables=[];const shirts=[mat(0x8caa9f),mat(0xb79c68),mat(0x7894ae),mat(0xa8846c)];
+const names=['Léa Martin','Yanis Morel','Inès Laurent','Noé Perrin','Maya Petit','Adam Roux'];const jobs=['Technicienne','Agent logistique','Cultivatrice','Électricien','Soignante','Mécanicien'];
+function person(id,kind,n,phase){const g=new T.Group();const shirt=new T.Mesh(bodyGeo,shirts[id%4]);shirt.position.y=.53;g.add(shirt);const head=new T.Mesh(sphereGeo,mat(0xc6ab8c));head.position.y=.95;g.add(head);for(const s of [-1,1])box(g,s*.075,.2,0,.09,.4,.1,dark);const hit=new T.Mesh(new T.SphereGeometry(.5,6,4),new T.MeshBasicMaterial({visible:false}));hit.position.y=.55;g.add(hit);hit.userData.id=id;scene.add(g);const p={id,g,kind,n,phase,speed:.12+(id%7)*.02};people.push(p);pickables.push(hit);return p;}
+for(let i=0;i<100;i++)person(i,'ring',1+i%24,i*2.399);
+for(let i=0;i<18;i++)person(100+i,'artery',floor,i*1.73);
+for(let i=0;i<22;i++)person(118+i,'stair',1,i*.97);
+const selectedRing=new T.Mesh(new T.TorusGeometry(.35,.035,5,24),goldGlow);selectedRing.rotation.x=Math.PI/2;selectedRing.visible=false;scene.add(selectedRing);
+const flows=[];for(let i=0;i<20;i++){const o=new T.Mesh(new T.SphereGeometry(.095,5,4),i%2?goldGlow:cyanGlow);network.add(o);flows.push(o);}
+let yaw=.62,pitch=.48,radius=35,target=new T.Vector3(0,fy(floor)-5,0),camPos=new T.Vector3(22,15,29),camLook=new T.Vector3(0,-5,0),desiredPos=new T.Vector3(),desiredLook=new T.Vector3(),drag=null,t=0,last=performance.now(),travelYaw=0;
+camera.position.copy(camPos);
+// Quatre traitements : matière, éclairage, contours et détails de construction.
+let styleName='brut';
+const styleSettings={exposure:1,fog:1};
+const presets={
+ brut:{name:'Béton brut',description:'Béton texturé, palette minérale et lumière naturelle.',bg:0x161d1e,floor:0x929487,selected:0xc9b489,wall:0x747c75,metal:0x465151,edge:0xa6a68e,hemi:1.5,key:2.0,fill:.9,exposure:1.1,fog:1,sky:0xdde7df,ground:0x484b43,keyColor:0xffe4bb},
+ model:{name:'Maquette claire',description:'Volumes en ivoire, mobilier coloré, lumière diffuse et silhouettes discrètes.',bg:0xe6e4db,floor:0xd8d2c4,selected:0xa5bca8,wall:0xc9c9bd,metal:0x9bada9,edge:0xf5eddb,hemi:2.4,key:1.5,fill:1.1,exposure:1.12,fog:.35,sky:0xffffff,ground:0xc2c0b3,keyColor:0xffffff},
+ industrial:{name:'Industriel',description:'Acier patiné, équipements apparents et contraste entre éclairage chaud et froid.',bg:0x09131f,floor:0x56636c,selected:0xc39758,wall:0x344852,metal:0x253640,edge:0x8b9393,hemi:.95,key:1.1,fill:1.25,exposure:1.3,fog:1.35,sky:0x91b9da,ground:0x212a34,keyColor:0xffb55f},
+ illustrated:{name:'Illustré',description:'Aplats de couleur, contours dessinés et personnages aux proportions accentuées.',bg:0x738b94,floor:0xc5b898,selected:0xe6af62,wall:0x839d99,metal:0x465d68,edge:0xe3d6b5,hemi:.95,key:2.8,fill:.5,exposure:1.0,fog:.45,sky:0xf7eacb,ground:0x677d7d,keyColor:0xffefc4}
+};
+const texCanvas=document.createElement('canvas');texCanvas.width=128;texCanvas.height=128;const tx=texCanvas.getContext('2d');let seed=12457;
+const data=tx.createImageData(128,128);for(let i=0;i<data.data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const n=170+(seed>>>24)*.27;data.data[i]=n;data.data[i+1]=n;data.data[i+2]=n;data.data[i+3]=255;}tx.putImageData(data,0,0);tx.strokeStyle='#888888';tx.lineWidth=1;tx.strokeRect(.5,.5,127,63);tx.strokeRect(.5,64.5,127,63);
+const concreteTexture=new T.CanvasTexture(texCanvas);concreteTexture.wrapS=concreteTexture.wrapT=T.RepeatWrapping;concreteTexture.repeat.set(5,5);concreteTexture.colorSpace=T.SRGBColorSpace;
+const extras=new T.Group();artery.add(extras);
+for(let i=0;i<10;i++)for(const side of [-1,1]){const x=A+1.5+i*2.8;box(extras,x,2.4,side*3.5,.55,.7,.25,metal);box(extras,x,2.4,side*3.34,.3,.07,.03,warm);}
+for(let side of [-1,1])for(let k=0;k<3;k++)box(extras,A+L/2,3.05-k*.15,side*(2.8+k*.16),L,.08,.08,k===0?amber:metal);
+const originals=new Map();scene.traverse(o=>{if(o.isMesh&&!Array.isArray(o.material))originals.set(o,o.material);});
+const outlineMaterial=new T.LineBasicMaterial({color:0x293b45,transparent:true,opacity:.7});const outlines=[];
+const edgeGeometry=new T.EdgesGeometry(boxGeo);for(const [mesh,material] of originals){if(mesh.geometry!==boxGeo||mesh.scale.y<.15||mesh.scale.y>.99&&mesh.scale.x<.3||mesh.parent===extras)continue;if(outlines.length>160&&mesh.parent!==artery)continue;const line=new T.LineSegments(edgeGeometry,outlineMaterial);line.visible=false;mesh.add(line);outlines.push(line);}
+const characterOutlines=[];const ink=new T.MeshBasicMaterial({color:0x273742,side:T.BackSide});for(const p of people){for(const part of p.g.children.slice(0,2)){const border=new T.Mesh(part.geometry,ink);border.scale.setScalar(1.09);border.visible=false;part.add(border);characterOutlines.push(border);}}
+const materialCache={};
+function styleMaterial(original,p,id){
+ let m;if(id==='illustrated'&&original.isMeshStandardMaterial){m=new T.MeshToonMaterial({color:original.color,emissive:original.emissive,emissiveIntensity:original.emissiveIntensity,side:original.side});}
+ else m=original.clone();
+ if(original===concrete)m.color.setHex(p.floor);if(original===wallMat)m.color.setHex(p.wall);if(original===metal)m.color.setHex(p.metal);if(original===edge)m.color.setHex(p.edge);
+ if(id==='model'){if(original===dark)m.color.setHex(0x85928e);if(original===timber)m.color.setHex(0xd9af7a);if(original===glass)m.color.setHex(0x90b1b8);roomColors.forEach((r,i)=>{if(original===r)m.color.setHex([0xacc4b2,0xd6baa0,0xb6cbd3][i]);});if(m.roughness!==undefined)m.roughness=1;}
+ if((id==='industrial'||id==='brut')&&[concrete,wallMat,edge].includes(original)){m.map=concreteTexture;m.bumpMap=concreteTexture;m.bumpScale=id==='industrial'?.13:.07;}
+ if(id==='industrial'&&[metal,edge,blue,amber].includes(original)){m.metalness=.55;m.roughness=.4;}
+ if(id==='illustrated'){m.flatShading=true;roomColors.forEach((r,i)=>{if(original===r)m.color.setHex([0x8cb5a1,0xc5a385,0x9cbcc9][i]);});}
+ return m;
+}
+function refreshLight(){const p=presets[styleName];renderer.toneMappingExposure=p.exposure*styleSettings.exposure;}
+function applyStyle(id,persist=true){if(!presets[id])return;styleName=id;const p=presets[id];root.dataset.style=id;$('.silo-style-select').value=id;$('.silo-style-description').textContent=p.description;
+ renderer.setClearColor(p.bg);scene.fog.color.setHex(p.bg);hemi.color.setHex(p.sky);hemi.groundColor.setHex(p.ground);hemi.intensity=p.hemi;key.color.setHex(p.keyColor);key.intensity=p.key;fill.intensity=p.fill;corridorLight.intensity=id==='industrial'?85:id==='model'?22:45;refreshLight();
+ let cache=materialCache[id];if(!cache){cache=new Map();for(const original of new Set(originals.values()))cache.set(original,styleMaterial(original,p,id));materialCache[id]=cache;}
+ for(const [mesh,original] of originals)mesh.material=cache.get(original);
+ rings.forEach((r,i)=>{r.material.color.setHex(i+1===floor?p.selected:p.floor);if(id==='brut'||id==='industrial'){r.material.map=concreteTexture;r.material.bumpMap=concreteTexture;r.material.bumpScale=.04;}});
+ extras.visible=id==='industrial';outlines.forEach(l=>l.visible=id==='illustrated');characterOutlines.forEach(l=>l.visible=id==='illustrated');for(const person of people){person.g.children[1].scale.setScalar(id==='illustrated'?1.3:1);}
+ if(persist)save();
+}
+$('.silo-style-select').onchange=e=>applyStyle(e.target.value);
+if(globalThis.Tweak){const tweaking=new Tweak({container:root,onChange:refreshLight});tweaking.addSlider(styleSettings,'exposure',{min:.65,max:1.5,step:.05,label:'Luminosité'});tweaking.addSlider(styleSettings,'fog',{min:0,max:2,step:.1,label:'Profondeur atmosphérique'});}
+function save(){window.openai?.setWidgetState?.({modelContent:{floor,view:mode,depth:Math.round(distance),style:styleName},privateContent:{network:showNetwork}})?.catch(()=>{});}
+function restore(s){if(!s?.modelContent)return;const m=s.modelContent;if(Number.isInteger(m.floor))setFloor(m.floor,false);if(['shaft','floor','artery'].includes(m.view))setMode(m.view,false);if(Number.isFinite(m.depth))setDistance(m.depth,false);if(presets[m.style])applyStyle(m.style,false);}
+function setFloor(n,persist=true){floor=Math.max(1,Math.min(FLOORS,Math.round(n)));$('.silo-level-number').textContent=String(floor).padStart(2,'0');$('.silo-level-range').value=floor;artery.position.y=fy(floor);rings.forEach((r,i)=>r.material.color.setHex(i+1===floor?presets[styleName].selected:presets[styleName].floor));$('.silo-location-name').textContent=mode==='shaft'?'Le grand puits':mode==='floor'?'Le niveau '+floor:'L’artère du niveau '+floor;for(let i=2;i<4;i++)network.children[i].position.y=fy(floor)+2.9;if(persist)save();}
+function setMode(v,persist=true){mode=v;root.dataset.view=v;root.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===v));$('.silo-travel').hidden=v!=='artery';$('.silo-location-detail').textContent=v==='shaft'?'Un escalier continu relie les 24 niveaux.':v==='floor'?'Un palier circulaire et une artère de 30 mètres.':'Avancez entre ateliers et logements.';$('.silo-help-text').textContent=v==='artery'?'Glisser : regarder · Molette / ↑ ↓ : avancer':'Glisser : tourner · Molette : zoomer · Clic sur un habitant : observer';if(v==='floor'){yaw=.95;pitch=.78;radius=42;}else if(v==='shaft'){yaw=.62;pitch=.78;radius=11;}else travelYaw=0;setFloor(floor,false);if(persist)save();}
+function setDistance(d,persist=true){distance=Math.max(0,Math.min(26,d));$('.silo-travel-range').value=distance;$('.silo-distance').textContent=Math.round(distance)+' m';if(persist)save();}
+function zoom(v){if(mode==='artery')setDistance(distance+v*1.3);else{radius=Math.max(7,Math.min(135,radius*(v>0?.86:1.16)));save();}}
+$('.silo-up').onclick=()=>setFloor(floor-1);$('.silo-down').onclick=()=>setFloor(floor+1);$('.silo-level-range').oninput=e=>setFloor(+e.target.value);root.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setMode(b.dataset.view));$('.silo-zoom-in').onclick=()=>zoom(1);$('.silo-zoom-out').onclick=()=>zoom(-1);$('.silo-travel-range').oninput=e=>setDistance(+e.target.value);$('.silo-back').onclick=()=>setDistance(distance-3);$('.silo-forward').onclick=()=>setDistance(distance+3);
+$('.silo-network').onclick=()=>{showNetwork=!showNetwork;network.visible=showNetwork;$('.silo-network').setAttribute('aria-pressed',showNetwork);save();};$('.silo-pause').onclick=()=>{paused=!paused;$('.silo-pause').setAttribute('aria-pressed',paused);$('.silo-pause').textContent=paused?'Reprendre habitants':'Pause habitants';$('.silo-live-text').textContent=paused?'Habitants en pause':'Vie illustrative';};$('.silo-close').onclick=()=>{selected=null;$('.silo-person').hidden=true;};
+const ray=new T.Raycaster();const mouse=new T.Vector2();
+renderer.domElement.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,moved:false};renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>2)drag.moved=true;if(mode==='artery')travelYaw=Math.max(-.85,Math.min(.85,travelYaw-dx*.004));else{yaw-=dx*.005;pitch=Math.max(-.9,Math.min(1.25,pitch+dy*.005));}drag.x=e.clientX;drag.y=e.clientY;});
+renderer.domElement.addEventListener('pointerup',e=>{if(!drag)return;if(!drag.moved){const rect=host.getBoundingClientRect();mouse.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);ray.setFromCamera(mouse,camera);const hits=ray.intersectObjects(pickables,false);if(hits.length){selected=people[hits[0].object.userData.id];$('.silo-person').hidden=false;$('.silo-person-name').textContent=names[selected.id%6];$('.silo-person-job').textContent=jobs[selected.id%6]+' · Niveau '+(selected.kind==='ring'?selected.n:floor);$('.silo-person-state').textContent=selected.kind==='stair'?'Emprunte l’escalier central':selected.kind==='artery'?'Se déplace dans l’artère':'Circule sur le palier';}}drag=null;save();});renderer.domElement.addEventListener('pointercancel',()=>drag=null);
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();if(mode==='artery')setDistance(distance+Math.sign(e.deltaY)*1.2);else radius=Math.max(7,Math.min(135,radius*Math.exp(e.deltaY*.001)));},{passive:false});
+root.addEventListener('keydown',e=>{if(e.target.matches('input'))return;if(mode==='artery'&&['ArrowUp','ArrowDown','z','s','w'].includes(e.key)){e.preventDefault();setDistance(distance+(['ArrowDown','s'].includes(e.key)?-1:1));}});
+new ResizeObserver(()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}).observe(host);
+window.addEventListener('openai:set_globals',e=>restore(e.detail?.globals?.widgetState));
+applyStyle('brut',false);setFloor(floor,false);setMode('shaft',false);restore(window.openai?.widgetState);loading.hidden=true;
+function animate(now){if(!root.isConnected){renderer.dispose();return;}const dt=Math.min(.05,(now-last)/1000);last=now;if(!paused)t+=dt;
+ if(mode==='shaft'){target.set(0,fy(floor)-5,0);desiredPos.set(target.x+Math.sin(yaw)*Math.cos(pitch)*radius,target.y+Math.sin(pitch)*radius,target.z+Math.cos(yaw)*Math.cos(pitch)*radius);desiredLook.copy(target);scene.fog.density=.009*presets[styleName].fog*styleSettings.fog;}
+ else if(mode==='floor'){target.set(22,fy(floor),0);desiredPos.set(target.x+Math.sin(yaw)*Math.cos(pitch)*radius,target.y+Math.sin(pitch)*radius,target.z+Math.cos(yaw)*Math.cos(pitch)*radius);desiredLook.copy(target);scene.fog.density=.004*presets[styleName].fog*styleSettings.fog;}
+ else{desiredPos.set(A+.8+distance,fy(floor)+2,0);desiredLook.set(desiredPos.x+12*Math.cos(travelYaw),fy(floor)+1.7,12*Math.sin(travelYaw));scene.fog.density=.012*presets[styleName].fog*styleSettings.fog;}
+ const f=1-Math.exp(-dt*5);camPos.lerp(desiredPos,f);camLook.lerp(desiredLook,f);camera.position.copy(camPos);camera.lookAt(camLook);
+ for(const p of people){const q=t*p.speed+p.phase;if(p.kind==='ring'){p.g.position.set(Math.cos(q)*14.2,fy(p.n),Math.sin(q)*14.2);p.g.rotation.y=-q;}else if(p.kind==='artery'){const x=A+1+(Math.sin(q*.4)+1)*13.2;p.g.position.set(x,fy(floor),Math.sin(p.phase)*1.8);p.g.rotation.y=Math.cos(q*.4)>0?Math.PI/2:-Math.PI/2;}else{const u=((q*.045)%1+1)%1;const angle=u*(FLOORS-1)*Math.PI*2;p.g.position.set(Math.cos(angle)*stairRadius,top-u*(FLOORS-1)*H,Math.sin(angle)*stairRadius);p.g.rotation.y=-angle;}}
+ selectedRing.visible=!!selected;if(selected){selectedRing.position.copy(selected.g.position);selectedRing.position.y+=.04;}
+ flows.forEach((o,i)=>{const p=((t*.12+i/20)%1);if(i<12)o.position.set(16.1+(i%2)*.5,top-p*97,-5.9);else o.position.set(A+p*L,fy(floor)+2.9,-3.3+(i%2)*.25);});
+ // La coupe retire les niveaux au-dessus de l’étage en vue rapprochée.
+ floorGroups.forEach((g,i)=>g.visible=mode==='shaft'||i+1===floor);artery.visible=true;renderer.clippingPlanes=mode==='shaft'?[]:[new T.Plane(new T.Vector3(0,-1,0),fy(floor)+3.8),new T.Plane(new T.Vector3(0,1,0),-fy(floor)+.4)];
+ renderer.render(scene,camera);requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+root.dataset.ready='true';
+}catch(error){loading.textContent=error.message;loading.setAttribute('role','alert');root.dataset.error=error.message;}
+})();
+</script>
