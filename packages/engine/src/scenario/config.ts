@@ -3,7 +3,7 @@ import { SECTOR_TYPES, type SectorType } from "./sectors";
 export const SCENARIO_VERSION = 1;
 
 /** Age class of the initial population; shares are in percent (D-06). */
-export interface AgeClass {
+export interface ScenarioAgeClass {
   minAge: number;
   maxAge: number;
   sharePercent: number;
@@ -30,7 +30,7 @@ export interface ScenarioConfig {
   version: typeof SCENARIO_VERSION;
   name: string;
   seed: number;
-  population: { total: number; ageClasses: AgeClass[] };
+  population: { total: number; ageClasses: ScenarioAgeClass[] };
   topology: { levels: number; arteriesPerLevel: number };
   sectors: SectorAssignment[];
   stocks: InitialStocks;

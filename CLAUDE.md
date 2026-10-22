@@ -31,7 +31,8 @@ Scénario (`packages/engine/src/scenario`) : `loadScenario(json)` valide (toutes
 config versionnée (population, topologie, secteurs par niveau/artère, stocks en sous-unités D-06) ;
 `SECTOR_CATALOG` (17 secteurs du §3.4) ; `starterSilo` (24 niveaux × 4 artères, 2 000 habitants,
 2 400 lits). Chaque artère de chaque niveau a exactement un secteur. `buildScenarioModel(config)` construit
-le modèle spatial ; `buildSpatialModel` exige `roomCapacity` (donnée de config, aucune valeur par défaut).
+le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
+`DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
 
 ## Décisions
 
