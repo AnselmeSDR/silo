@@ -133,5 +133,5 @@ export const buildSpatialModel = (options: BuildOptions): SpatialModel => {
     links[edge.to]!.push({ to: edge.from, edge: i, ms: edge.msBackward });
   });
 
-  return { levels, arteriesPerLevel, nodes, edges, links };
+  return { levels, arteriesPerLevel, nodes, edges, links, revision: 0 };
 };

@@ -74,6 +74,8 @@ export interface SpatialModel {
   edges: Edge[];
   /** Derived from `edges`; indexed by node id. */
   links: Link[][];
+  /** Bumped by every change that can alter routes, so route caches know when to drop (§15.3). */
+  revision: number;
 }
 
 export interface BuildOptions {

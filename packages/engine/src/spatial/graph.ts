@@ -13,7 +13,10 @@ export const rooms = (model: SpatialModel): Room[] =>
   model.nodes.filter((node): node is Room => node.kind === "room");
 
 export const setServiceState = (model: SpatialModel, id: NodeId, service: ServiceState): void => {
-  getRoom(model, id).service = service;
+  const room = getRoom(model, id);
+  if (room.service === service) return;
+  room.service = service;
+  model.revision++;
 };
 
 const isBlocked = (model: SpatialModel, link: Link): boolean => {

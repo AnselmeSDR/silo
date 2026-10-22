@@ -20,7 +20,12 @@ par système), sauvegarde JSON versionnée. Code jetable : dossiers `proto/` (ne
 
 Modèle spatial (`packages/engine/src/spatial`) : graphe non orienté à ids numériques (palier, jonction de
 coursive, nœud d'artère, local), cotes et temps de D-08 ; `buildSpatialModel({ levels, arteriesPerLevel })`,
-`findPath` (Dijkstra, ms), `unreachableLevels`. Un local « inaccessible » est exclu des trajets.
+`findPath` (Dijkstra, ms), `unreachableLevels`. Un local « inaccessible » est exclu des trajets. `revision` du modèle (incrémentée par `setServiceState`) invalide les routes.
+
+Déplacements (`packages/engine/src/movement`) : `createMovement`, `requestTrip(world, id, destination)`,
+`movementSystem` (`System<MovementWorld>`). Trajet = route du graphe parcourue arête par arête (60 s par pas),
+capacité par pas et par type de passage (file d'attente si saturé), routes en cache jusqu'au changement de
+`revision` ; la congestion ne déclenche aucun recalcul.
 
 ## Décisions
 
