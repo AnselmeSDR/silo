@@ -1,4 +1,5 @@
-import type { NodeId, RoomFunction } from "../spatial";
+import type { SectorType } from "../scenario";
+import type { NodeId } from "../spatial";
 
 export type ProfessionId = string;
 export type SkillId = string;
@@ -8,8 +9,8 @@ export interface Profession {
   id: ProfessionId;
   label: string;
   tasks: readonly string[];
-  /** Room functions where the profession can be assigned. */
-  places: readonly RoomFunction[];
+  /** Sector types (SIL-16 catalog) where the profession works. */
+  sectors: readonly SectorType[];
   /** Skills the profession requires. */
   skills: readonly SkillId[];
   /** Effect of a staff shortage, as text for the interface. */

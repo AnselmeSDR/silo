@@ -1,4 +1,5 @@
-import { findPath, getRoom, type SpatialModel } from "../spatial";
+import type { ScenarioConfig, SectorType } from "../scenario";
+import { findPath, getRoom, type Room, type SpatialModel } from "../spatial";
 import { ageOf, getInhabitant, type Population } from "../population";
 import { commuteMinutes, isOnDuty, phaseAt, planDay } from "./day";
 import { getProfession } from "./catalog";
@@ -16,9 +17,19 @@ export const createWorkProfile = (overrides: Partial<WorkProfile> = {}): WorkPro
   ...overrides,
 });
 
+/** Sector type of a room, read from the scenario: every (level, artery) has exactly one sector. */
+export const sectorOfRoom = (config: ScenarioConfig, room: Room): SectorType => {
+  const found = config.sectors.find(
+    (s) => s.levels.includes(room.level) && (!s.arteries || s.arteries.includes(room.artery)),
+  );
+  if (!found) throw new Error(`room ${room.id} belongs to no sector`);
+  return found.sector;
+};
+
 /** Assigns an inhabitant to a room with a profession and a shift; throws on an invalid pairing. */
 export const createAssignment = (
   spatial: SpatialModel,
+  config: ScenarioConfig,
   population: Population,
   inhabitantId: number,
   professionId: string,
@@ -27,8 +38,9 @@ export const createAssignment = (
 ): Assignment => {
   const profession = getProfession(professionId);
   const target = getRoom(spatial, room);
-  if (!profession.places.includes(target.function)) {
-    throw new Error(`${professionId} cannot work in a ${target.function} room`);
+  const sector = sectorOfRoom(config, target);
+  if (!profession.sectors.includes(sector)) {
+    throw new Error(`${professionId} cannot work in the ${sector} sector`);
   }
   if (target.service === "inaccessible") throw new Error(`room ${room} is inaccessible`);
   const inhabitant = getInhabitant(population, inhabitantId);

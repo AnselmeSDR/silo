@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { STEPS_PER_DAY } from "../core";
 import { createPopulation, killInhabitant, moveInhabitant, setHealth } from "../population";
-import { buildSpatialModel, rooms, setServiceState } from "../spatial";
+import { SECTOR_TYPES, buildScenarioModel, starterSilo, type SectorType } from "../scenario";
+import { rooms, setServiceState } from "../spatial";
 import {
   PROFESSIONS,
   availableWorkforce,
@@ -15,17 +16,20 @@ import {
   phaseAt,
   planDay,
   relayShifts,
+  sectorOfRoom,
 } from "./index";
 
-const spatial = buildSpatialModel({
-  levels: 24,
-  arteriesPerLevel: 6,
-  roomFunction: (_level, _artery, slot) => (slot === 0 ? "technical" : "housing"),
-});
+const config = starterSilo;
+const spatial = buildScenarioModel(config);
 const population = createPopulation(spatial, { count: 300, seed: 1 });
-const technical = rooms(spatial).find((r) => r.function === "technical");
-const housing = rooms(spatial).find((r) => r.function === "housing");
-if (!technical || !housing) throw new Error("fixture needs technical and housing rooms");
+const roomIn = (sector: SectorType) => {
+  const room = rooms(spatial).find((r) => sectorOfRoom(config, r) === sector);
+  if (!room) throw new Error(`fixture needs a ${sector} room`);
+  return room;
+};
+const energy = roomIn("energy");
+const water = roomIn("waterSanitation");
+const housing = roomIn("housing");
 
 describe("catalog", () => {
   it("defines the 25 professions of concept §5.2.1 as data", () => {
@@ -33,10 +37,19 @@ describe("catalog", () => {
     expect(new Set(PROFESSIONS.map((p) => p.id)).size).toBe(25);
     for (const p of PROFESSIONS) {
       expect(p.tasks.length).toBeGreaterThan(0);
-      expect(p.places.length).toBeGreaterThan(0);
+      expect(p.sectors.length).toBeGreaterThan(0);
       expect(p.skills.length).toBeGreaterThan(0);
       expect(p.shortage).not.toBe("");
     }
+  });
+
+  it("anchors every workplace to a sector type of the SIL-16 catalog", () => {
+    for (const p of PROFESSIONS) {
+      for (const sector of p.sectors) expect(SECTOR_TYPES).toContain(sector);
+    }
+    expect(getProfession("farmer").sectors).toEqual(["agriculture"]);
+    expect(getProfession("waterTechnician").sectors).toEqual(["waterSanitation"]);
+    expect(getProfession("energyOperator").sectors).toEqual(["energy"]);
   });
 
   it("flags continuous services and rejects unknown ids", () => {
@@ -46,32 +59,40 @@ describe("catalog", () => {
   });
 });
 
+describe("sectorOfRoom", () => {
+  it("reads the sector of the scenario, including a shared level", () => {
+    expect(sectorOfRoom(config, roomIn("agriculture"))).toBe("agriculture");
+    const sectors = new Set(rooms(spatial).map((r) => sectorOfRoom(config, r)));
+    expect(sectors).toContain("airVentilation");
+    expect(sectors).toContain("recyclingWaste");
+  });
+});
+
 describe("assignment", () => {
   const shift = { startMinute: 480, durationMin: 480 };
 
   it("links a person to a room, a profession and a shift", () => {
-    const a = createAssignment(spatial, population, 0, "electrician", technical.id, shift);
-    expect(a).toMatchObject({ inhabitantId: 0, professionId: "electrician", room: technical.id });
+    const a = createAssignment(spatial, config, population, 0, "electrician", energy.id, shift);
+    expect(a).toMatchObject({ inhabitantId: 0, professionId: "electrician", room: energy.id });
   });
 
-  it("rejects a room whose function does not fit, an inaccessible room and a dead person", () => {
-    expect(() => createAssignment(spatial, population, 0, "cook", technical.id, shift)).toThrow();
-    const sealed = buildSpatialModel({
-      levels: 1,
-      arteriesPerLevel: 1,
-      roomFunction: () => "technical",
-    });
-    const sealedRoom = rooms(sealed)[0];
-    if (!sealedRoom) throw new Error("no room");
-    setServiceState(sealed, sealedRoom.id, "inaccessible");
+  it("rejects a profession in a sector outside its workplaces, an inaccessible room and a dead person", () => {
     expect(() =>
-      createAssignment(sealed, population, 0, "electrician", sealedRoom.id, shift),
+      createAssignment(spatial, config, population, 0, "cook", energy.id, shift),
+    ).toThrow(/energy sector/);
+    expect(() =>
+      createAssignment(spatial, config, population, 0, "farmer", water.id, shift),
+    ).toThrow(/waterSanitation sector/);
+    const sealed = buildScenarioModel(config);
+    setServiceState(sealed, energy.id, "inaccessible");
+    expect(() =>
+      createAssignment(sealed, config, population, 0, "electrician", energy.id, shift),
     ).toThrow(/inaccessible/);
     const pop = createPopulation(spatial, { count: 30, seed: 2 });
     killInhabitant(pop, 3, 0);
-    expect(() => createAssignment(spatial, pop, 3, "electrician", technical.id, shift)).toThrow(
-      /dead/,
-    );
+    expect(() =>
+      createAssignment(spatial, config, pop, 3, "electrician", energy.id, shift),
+    ).toThrow(/dead/);
   });
 });
 
@@ -131,18 +152,18 @@ describe("workforce", () => {
 describe("productive presence", () => {
   const shift = { startMinute: 480, durationMin: 480 };
   const pop = createPopulation(spatial, { count: 30, seed: 6 });
-  const assignment = createAssignment(spatial, pop, 0, "electrician", technical.id, shift);
+  const assignment = createAssignment(spatial, config, pop, 0, "electrician", energy.id, shift);
   const commute = commuteOf(spatial, pop, assignment);
   const workMinute = 500;
 
   it("counts a worker at the post during the work phase", () => {
     expect(commute).not.toBeNull();
-    moveInhabitant(pop, 0, technical.id);
+    moveInhabitant(pop, 0, energy.id);
     expect(isProductive(spatial, pop, createWorkProfile(), assignment, 0, workMinute)).toBe(true);
   });
 
   it("does not count an absence, a blocked trip, illness or the wrong phase", () => {
-    moveInhabitant(pop, 0, technical.id);
+    moveInhabitant(pop, 0, energy.id);
     const absent = createWorkProfile({ absentUntilStep: 10 });
     expect(isProductive(spatial, pop, absent, assignment, 0, workMinute)).toBe(false);
     expect(isProductive(spatial, pop, absent, assignment, 10, workMinute)).toBe(true);
@@ -173,21 +194,21 @@ describe("relay of continuous services", () => {
   it("covers the 24 h with three teams", () => {
     const pop = createPopulation(spatial, { count: 30, seed: 8 });
     const assignments = relayShifts(3).map((shift, i) =>
-      createAssignment(spatial, pop, i, "waterTechnician", technical.id, shift),
+      createAssignment(spatial, config, pop, i, "waterTechnician", water.id, shift),
     );
     for (let minute = 0; minute < STEPS_PER_DAY; minute++) {
-      const count = onDutyCount(spatial, pop, assignments, "waterTechnician", technical.id, minute);
+      const count = onDutyCount(spatial, pop, assignments, "waterTechnician", water.id, minute);
       expect(count).toBeGreaterThanOrEqual(1);
     }
   });
 
   it("leaves holes with a single day shift and rejects bad team counts", () => {
     const pop = createPopulation(spatial, { count: 30, seed: 8 });
-    const day = createAssignment(spatial, pop, 0, "waterTechnician", technical.id, {
+    const day = createAssignment(spatial, config, pop, 0, "waterTechnician", water.id, {
       startMinute: 480,
       durationMin: 480,
     });
-    expect(onDutyCount(spatial, pop, [day], "waterTechnician", technical.id, 60)).toBe(0);
+    expect(onDutyCount(spatial, pop, [day], "waterTechnician", water.id, 60)).toBe(0);
     expect(() => relayShifts(1)).toThrow();
     expect(() => relayShifts(7)).toThrow();
   });
