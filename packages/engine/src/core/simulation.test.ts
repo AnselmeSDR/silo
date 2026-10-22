@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { STEPS_PER_DAY, createSimulation, timeOfStep, type System } from "./index";
+import {
+  DEFAULT_MAX_STEPS_PER_ADVANCE,
+  STEPS_PER_DAY,
+  createSimulation,
+  timeOfStep,
+  type System,
+} from "./index";
 
 interface World {
   order: string[];
@@ -139,6 +145,43 @@ describe("pause and speeds", () => {
     expect(sim.advance(1000)).toBe(10);
     sim.speed = "x100";
     expect(sim.advance(1000)).toBe(100);
+  });
+});
+
+describe("step cap per advance", () => {
+  it("slows down after a long sleep instead of catching up", () => {
+    const sim = make();
+    sim.speed = "x100";
+    expect(sim.advance(10 * 60_000)).toBe(DEFAULT_MAX_STEPS_PER_ADVANCE);
+    expect(sim.advance(0)).toBe(0);
+    expect(sim.time.step).toBe(DEFAULT_MAX_STEPS_PER_ADVANCE);
+  });
+
+  it("caps a slow frame at x100 and honours a custom cap", () => {
+    const sim = createSimulation({ seed: 1, state: makeWorld(), systems, maxStepsPerAdvance: 5 });
+    sim.speed = "x100";
+    expect(sim.advance(1000)).toBe(5);
+    expect(sim.advance(20)).toBe(2);
+  });
+
+  it("never skips a step: capped run equals a plain run", () => {
+    const capped = createSimulation({
+      seed: 4,
+      state: makeWorld(),
+      systems,
+      maxStepsPerAdvance: 3,
+    });
+    capped.speed = "x100";
+    while (capped.time.step < 30) capped.advance(1000);
+    const plain = createSimulation({ seed: 4, state: makeWorld(), systems });
+    for (let i = 0; i < 30; i++) plain.stepOnce();
+    expect(snapshot(capped.state)).toBe(snapshot(plain.state));
+  });
+
+  it("rejects an invalid cap", () => {
+    expect(() =>
+      createSimulation({ seed: 1, state: makeWorld(), systems, maxStepsPerAdvance: 0 }),
+    ).toThrow("maxStepsPerAdvance");
   });
 });
 

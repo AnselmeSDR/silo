@@ -15,11 +15,16 @@ export interface System<S> {
   update(state: S, ctx: SystemContext): void;
 }
 
+/** Default cap: 2 s of backlog at x100; beyond it the simulation slows down (D-02). */
+export const DEFAULT_MAX_STEPS_PER_ADVANCE = 200;
+
 export interface SimulationOptions<S> {
   seed: bigint | number;
   state: S;
   /** Explicit resolution order, run in this order at every step. */
   systems: readonly System<S>[];
+  /** Max steps run by one advance() call; the excess backlog is dropped, never caught up. */
+  maxStepsPerAdvance?: number;
 }
 
 export interface Simulation<S> {
@@ -29,7 +34,7 @@ export interface Simulation<S> {
   readonly systemOrder: readonly string[];
   /** Runs exactly one step, whatever the speed. */
   stepOnce(): void;
-  /** Feeds real elapsed ms; runs the whole steps due at the current speed. */
+  /** Feeds real elapsed ms; runs the whole steps due at the current speed, capped by maxStepsPerAdvance. */
   advance(realMs: number): number;
 }
 
@@ -37,7 +42,11 @@ export const createSimulation = <S>({
   seed,
   state,
   systems,
+  maxStepsPerAdvance = DEFAULT_MAX_STEPS_PER_ADVANCE,
 }: SimulationOptions<S>): Simulation<S> => {
+  if (!Number.isInteger(maxStepsPerAdvance) || maxStepsPerAdvance < 1) {
+    throw new Error("maxStepsPerAdvance must be a positive integer");
+  }
   const names = systems.map((s) => s.name);
   if (new Set(names).size !== names.length) throw new Error("Duplicate system name");
   const streams = new Map(names.map((name) => [name, createStream(seed, name)]));
@@ -64,8 +73,9 @@ export const createSimulation = <S>({
     },
     advance(realMs) {
       owed += (realMs / 1000) * SPEEDS[sim.speed];
-      const due = Math.floor(owed);
-      owed -= due;
+      const due = Math.min(Math.floor(owed), maxStepsPerAdvance);
+      // Drop the backlog beyond the cap: the simulation slows down, no step is skipped.
+      owed = due === maxStepsPerAdvance ? 0 : owed - due;
       for (let i = 0; i < due; i++) sim.stepOnce();
       return due;
     },
