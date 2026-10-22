@@ -45,7 +45,34 @@ export interface KindTotals {
   shortage: number;
 }
 
+/** Why a quantity changed (§13.4, minimal version). */
+export const CAUSES = ["production", "consumption", "loss", "transfer"] as const;
+export type Cause = (typeof CAUSES)[number];
+
+/** One variation of one stock; `delta` is signed, `shortage` is what was asked but not delivered. */
+export interface JournalEntry {
+  step: number;
+  stockId: number;
+  kind: ResourceKind;
+  cause: Cause;
+  delta: number;
+  shortage: number;
+  /** Other end of a transfer. */
+  counterpart?: number;
+}
+
+/** Bounded log of the causes: the oldest entries are dropped first. */
+export interface Journal {
+  limit: number;
+  entries: JournalEntry[];
+  /** Entries dropped to respect the limit. */
+  dropped: number;
+}
+
 export interface Stocks {
+  /** Step the flows are currently attributed to; moved forward by `stocksSystem`. */
+  step: number;
+  journal: Journal;
   stocks: Stock[];
   reservations: Record<number, Reservation>;
   nextReservationId: number;

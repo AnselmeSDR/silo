@@ -44,7 +44,7 @@ Stocks (`packages/engine/src/stocks`) : `createStocks`, `addStock` (nœud, type,
 `deposit`/`withdraw`/`lose`/`transfer` (bornés par le libre et la place, manque consigné dans `totals.shortage`),
 `reserve`/`releaseReservation`/`consumeReservation` (la quantité réservée reste dans `available` mais n'est plus
 libre), `verifyStocks` (bilan par stock et par type), `stocksSystem` (à placer en dernier : pertes, contrôle, ouverture
-du pas suivant). Les transferts ne vérifient pas l'accessibilité spatiale.
+du pas suivant). Les transferts ne vérifient pas l'accessibilité spatiale. Journal de causes (`stocks.journal`, borné par `createStocks(limit)`, défaut 10 000, `dropped` compte les pertes) : chaque variation y inscrit pas, stock, cause (`production`/`consumption`/`loss`/`transfer`), delta signé et manque ; `causesOf(stocks, { stockId, kind, sinceStep })`, `sumByCause`.
 
 Production (`packages/engine/src/production`) : fiches `PRODUCTION_SHEETS` (traitement de l'eau, culture
 hydroponique, turbine : intrants, sortie, durée, équipement, métier, opérateurs, capacité en lots parallèles),
