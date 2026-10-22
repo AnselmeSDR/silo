@@ -59,6 +59,13 @@ vers un stock non vide. `productivityFactor` (0–1, à multiplier par `effectiv
 résilience) et, si `profiles` est fourni, `absentUntilStep`. La santé baisse quand eau ou nourriture est à 0 (statut
 `ill` avec hystérésis), sans mort à ce stade.
 
+Décision (`packages/engine/src/decision`, §5.4) : `createDecisions()` (état dans `world.decisions`), `commit(decisions, assignment)`
+(engagement), `evaluate` (candidats `drink`/`eat`/`sleep`/`work`/`idle` scorés : un besoin sous `SEEK_THRESHOLD` passe avant l'engagement,
+dont le score suit la volonté), `decisionSystem` (ordre : `needsSystem`, `decisionSystem`, `movementSystem`, `stocksSystem`). La tentative
+est réelle (trajet, stock non vide, absence, incapacité) ; un échec porte une `FailureCause` (`no-resource`, `unreachable`,
+`incapacitated`, `absent`), consignée dans `failures` (une fois par changement d'action/cause, borné) et `failureCounts`. Si
+`world.decisions` existe, `needsSystem` ne lance plus de trajets (consommation et jauges seulement).
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
