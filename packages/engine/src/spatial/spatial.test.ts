@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_ROOM_CAPACITY,
   buildSpatialModel,
   findPath,
   getRoom,
@@ -24,6 +25,18 @@ describe("rooms", () => {
       access: "open",
       service: "available",
     });
+  });
+
+  it("take their capacity from the scenario, with a default", () => {
+    const custom = buildSpatialModel({
+      levels: 1,
+      arteriesPerLevel: 1,
+      roomCapacity: (_level, _artery, slot) => slot + 1,
+    });
+    expect(rooms(custom).map((r) => r.capacity)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(new Set(rooms(prototype).map((r) => r.capacity))).toEqual(
+      new Set([DEFAULT_ROOM_CAPACITY]),
+    );
   });
 
   it("match D-08 counts: 40 per level at target, 960 in total", () => {

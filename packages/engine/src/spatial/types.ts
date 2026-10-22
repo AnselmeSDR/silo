@@ -74,6 +74,8 @@ export interface SpatialModel {
   edges: Edge[];
   /** Derived from `edges`; indexed by node id. */
   links: Link[][];
+  /** Bumped by every change that can alter routes, so route caches know when to drop (§15.3). */
+  revision: number;
 }
 
 export interface BuildOptions {
@@ -81,6 +83,8 @@ export interface BuildOptions {
   levels: number;
   /** Arteries per level, evenly spaced (D-08: prototype 2, target 4). */
   arteriesPerLevel: number;
+  /** Number of occupants a room can host; scenario data, defaults to DEFAULT_ROOM_CAPACITY. */
+  roomCapacity?: (level: number, artery: number, slot: number) => number;
   /** Picks the function of a room; defaults to housing. */
   roomFunction?: (level: number, artery: number, slot: number) => RoomFunction;
 }

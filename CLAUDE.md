@@ -20,7 +20,19 @@ par système), sauvegarde JSON versionnée. Code jetable : dossiers `proto/` (ne
 
 Modèle spatial (`packages/engine/src/spatial`) : graphe non orienté à ids numériques (palier, jonction de
 coursive, nœud d'artère, local), cotes et temps de D-08 ; `buildSpatialModel({ levels, arteriesPerLevel })`,
-`findPath` (Dijkstra, ms), `unreachableLevels`. Un local « inaccessible » est exclu des trajets.
+`findPath` (Dijkstra, ms), `unreachableLevels`. Un local « inaccessible » est exclu des trajets. `revision` du modèle (incrémentée par `setServiceState`) invalide les routes.
+
+Déplacements (`packages/engine/src/movement`) : `createMovement`, `requestTrip(world, id, destination)`,
+`movementSystem` (`System<MovementWorld>`). Trajet = route du graphe parcourue arête par arête (60 s par pas),
+capacité par pas et par type de passage (file d'attente si saturé), routes en cache jusqu'au changement de
+`revision` ; la congestion ne déclenche aucun recalcul.
+
+Scénario (`packages/engine/src/scenario`) : `loadScenario(json)` valide (toutes les erreurs listées, `ScenarioError`) une
+config versionnée (population, topologie, secteurs par niveau/artère, stocks en sous-unités D-06) ;
+`SECTOR_CATALOG` (17 secteurs du §3.4) ; `starterSilo` (24 niveaux × 4 artères, 2 000 habitants,
+2 400 lits). Chaque artère de chaque niveau a exactement un secteur. `buildScenarioModel(config)` construit
+le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
+`DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
 
 Travail (`packages/engine/src/work`) : catalogue `PROFESSIONS` (25 métiers du §5.2.1 en données),
 `createAssignment` (lieu + métier + `Shift`), `planDay` / `phaseAt` (trajet, prise de poste, travail, pause,
