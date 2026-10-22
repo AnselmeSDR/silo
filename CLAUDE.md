@@ -22,6 +22,12 @@ Modèle spatial (`packages/engine/src/spatial`) : graphe non orienté à ids num
 coursive, nœud d'artère, local), cotes et temps de D-08 ; `buildSpatialModel({ levels, arteriesPerLevel })`,
 `findPath` (Dijkstra, ms), `unreachableLevels`. Un local « inaccessible » est exclu des trajets.
 
+Travail (`packages/engine/src/work`) : catalogue `PROFESSIONS` (25 métiers du §5.2.1 en données),
+`createAssignment` (lieu + métier + `Shift`), `planDay` / `phaseAt` (trajet, prise de poste, travail, pause,
+relève, retour), `relayShifts` (équipes à relais), `availableWorkforce` (main-d'œuvre ≠ population),
+`isProductive` (une absence ou un trajet bloqué n'est jamais une présence productive), `effectiveness`
+(fonction attribuée ≠ compétence réelle ≠ volonté).
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
