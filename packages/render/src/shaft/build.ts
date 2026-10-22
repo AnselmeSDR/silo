@@ -19,6 +19,11 @@ import { SHAFT_DIMENSIONS as D, createShaftLayout, type ShaftLayout } from "./la
 const concrete = new MeshStandardMaterial({ color: 0x969080, roughness: 0.96, side: DoubleSide });
 const slab = new MeshStandardMaterial({ color: 0x9faaa4, roughness: 0.96 });
 const steel = new MeshStandardMaterial({ color: 0x3f4847, roughness: 0.85 });
+const guardrailMaterial = new MeshStandardMaterial({
+  color: 0x3f4847,
+  roughness: 0.85,
+  side: DoubleSide,
+});
 const rock = new MeshStandardMaterial({ color: 0x4a4540, roughness: 1, side: DoubleSide });
 
 type Vec3 = [number, number, number];
@@ -90,6 +95,24 @@ const buildLevel = (layout: ShaftLayout, level: number): Group => {
   group.add(
     new Mesh(new RingGeometry(D.shaftRadius, D.wallRadius, 72).rotateX(-Math.PI / 2), slab),
   );
+  // Guardrail (D-08, 0.95 m) along the shaft edge, open where the bridge lands.
+  const gap = 2 * Math.asin(D.bridgeWidth / 2 / D.shaftRadius);
+  const bridgeTheta = Math.PI / 2 + layout.bridgeAngle(level);
+  const guardrail = new Mesh(
+    new CylinderGeometry(
+      D.shaftRadius,
+      D.shaftRadius,
+      D.guardrailHeight,
+      72,
+      1,
+      true,
+      bridgeTheta + gap / 2,
+      Math.PI * 2 - gap,
+    ),
+    guardrailMaterial,
+  );
+  guardrail.position.y = D.guardrailHeight / 2;
+  group.add(guardrail);
   // Landing bridge, one per level, alternating 0 / 180 degrees (D-08).
   const bridge = new Group();
   bridge.rotation.y = -layout.bridgeAngle(level);

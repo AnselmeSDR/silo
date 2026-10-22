@@ -66,7 +66,9 @@ lecture pour le rendu (`Observer` : copies simples, `summary()`) ; `packages/ren
 Rendu du puits (`packages/render/src/shaft`) : `createShaftLayout(config)` (cotes D-08 `SHAFT_DIMENSIONS`, niveaux,
 angles d'artères, hélice de l'escalier, pont alterné 0°/180°, pur et testé) et `buildShaft(config)` (`Group` Three.js :
 noyau, escalier en éventail instancié à parapets pleins continus, paliers annulaires, passerelles, artères). Décor
-statique, matières mates désaturées (D-05) ; `main.ts` l'affiche pour `starterSilo`.
+statique, matières mates désaturées (D-05), garde-corps de 0,95 m au bord du puits ; `main.ts` l'affiche pour
+`starterSilo`. Le rendu peut importer la configuration statique du moteur (`starterSilo`, `ScenarioConfig`) ; l'état
+dynamique reste lu uniquement par l'`Observer`.
 
 Besoins (`packages/engine/src/needs`) : `createNeeds({ count, seed })` (jauges entières 0–10 000 pour eau,
 nourriture, sommeil, santé ; traits individuels `metabolism` et `resilience`), `needsSystem` (`System<NeedsWorld>`, à
