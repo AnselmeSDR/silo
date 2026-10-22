@@ -52,12 +52,24 @@ hydroponique, turbine : intrants, sortie, durée, équipement, métier, opérate
 que si l'équipement marche et que les opérateurs requis sont en présence productive avec une compétence réelle > 0 ;
 un lot ne démarre que si tous les intrants sont libres, il les consomme aussitôt ; sans opérateur les lots en cours
 sont en pause. `explainMachine` / `explainStock` expliquent flux et blocages (`totals.blockedSteps`).
-Pas encore branché dans `createWorld`.
+Branché dans le scénario : `config.production` (optionnel, `{ sheetId, sector }[]`, validé par `loadScenario`) ;
+`createWorld` crée un stock localisé par ressource (secteur de stockage fixe, capacité = 2 × stock initial), installe
+chaque ligne dans le premier local de son secteur et l'équipe de 3 équipes à relais d'habitants disponibles, posés
+sur place (le trajet domicile-travail n'est pas simulé). Ordre des systèmes : production, déplacements, stocks.
 
 Observation et headless : `createWorld(config)` / `createScenarioSimulation(config)` (`world/`) assemblent
-l'état (spatial, population, mouvement, stocks). `createObserver(sim)` (`observation/`) est l'unique accès en
+l'état (spatial, population, mouvement, stocks, production). Le `Summary` expose aussi `production`
+(produit/consommé par ressource, état des machines). `createObserver(sim)` (`observation/`) est l'unique accès en
 lecture pour le rendu (`Observer` : copies simples, `summary()`) ; `packages/render` n'importe que ce type.
 `runHeadless(config, days)` + CLI : `pnpm engine [scenario.json] [--days N]` affiche le résumé final.
+
+Besoins (`packages/engine/src/needs`) : `createNeeds({ count, seed })` (jauges entières 0–10 000 pour eau,
+nourriture, sommeil, santé ; traits individuels `metabolism` et `resilience`), `needsSystem` (`System<NeedsWorld>`, à
+placer avant `movementSystem`, `stocksSystem` en dernier). L'eau et la nourriture se consomment dans un stock réel du
+nœud où se trouve l'habitant (`withdraw`) ; sinon il est `seeking` et, si `movement`/`spatial` sont dans le monde, part
+vers un stock non vide. `productivityFactor` (0–1, à multiplier par `effectiveness`), `incapacitated` (seuil selon la
+résilience) et, si `profiles` est fourni, `absentUntilStep`. La santé baisse quand eau ou nourriture est à 0 (statut
+`ill` avec hystérésis), sans mort à ce stade.
 
 ## Décisions
 

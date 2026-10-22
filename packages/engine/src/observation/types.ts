@@ -25,12 +25,24 @@ export interface MovementSummary {
   readonly completed: number;
 }
 
+export interface ProductionSummary {
+  /** Cumulated output and consumption per resource kind since the start. */
+  readonly produced: Readonly<Record<string, number>>;
+  readonly consumed: Readonly<Record<string, number>>;
+  readonly machines: readonly {
+    readonly label: string;
+    readonly status: string;
+    readonly completed: number;
+  }[];
+}
+
 /** Whole-state summary (diagnostic access level, concept §15.2). */
 export interface Summary {
   readonly time: SimTime;
   readonly population: PopulationSummary;
   readonly movement: MovementSummary;
   readonly stocks: Readonly<Record<string, number>>;
+  readonly production: ProductionSummary;
 }
 
 /**

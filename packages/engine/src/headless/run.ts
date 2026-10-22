@@ -19,4 +19,11 @@ export const formatSummary = (name: string, s: Summary): string =>
     `stocks: ${Object.entries(s.stocks)
       .map(([k, v]) => `${k}=${v}`)
       .join(" ")}`,
+    `produced: ${Object.entries(s.production.produced)
+      .map(([k, v]) => `${k}=${v}`)
+      .join(" ")}`,
+    `consumed: ${Object.entries(s.production.consumed)
+      .map(([k, v]) => `${k}=${v}`)
+      .join(" ")}`,
+    ...s.production.machines.map((m) => `machine ${m.label}: ${m.status}, ${m.completed} batches`),
   ].join("\n");

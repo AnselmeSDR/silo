@@ -50,4 +50,9 @@ export const starterSilo: ScenarioConfig = {
     energyWs: 36_000_000_000,
     spareParts: 500,
   },
+  production: [
+    { sheetId: "waterTreatment", sector: "waterSanitation" },
+    { sheetId: "hydroponicFarm", sector: "agriculture" },
+    { sheetId: "turbine", sector: "energy" },
+  ],
 };

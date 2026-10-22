@@ -8,7 +8,7 @@ import {
   roomOf,
   type Stocks,
 } from "../stocks";
-import { effectiveness, isProductive } from "../work";
+import { commuteOf, effectiveness, isProductive, type Assignment } from "../work";
 import { getSheet } from "./sheets";
 import type {
   BlockReason,
@@ -18,7 +18,7 @@ import type {
   ProductionWorld,
 } from "./types";
 
-export const createProduction = (): ProductionState => ({ machines: [] });
+export const createProduction = (): ProductionState => ({ machines: [], commutes: new Map() });
 
 export interface MachineOptions {
   sheetId: string;
@@ -66,6 +66,16 @@ export const addMachine = (
   return id;
 };
 
+/** Commute of an assignment, cached until the spatial model changes (the route is the costly part). */
+const cachedCommute = (world: ProductionWorld, a: Assignment): number | null => {
+  const { commutes } = world.production;
+  const hit = commutes.get(a.inhabitantId);
+  if (hit && hit.revision === world.spatial.revision) return hit.minutes;
+  const minutes = commuteOf(world.spatial, world.population, a);
+  commutes.set(a.inhabitantId, { revision: world.spatial.revision, minutes });
+  return minutes;
+};
+
 /** Operators on duty and able: productive presence and a real skill (assigned ≠ able, concept §5.2). */
 export const activeOperators = (world: ProductionWorld, machine: Machine, step: number): number => {
   const sheet = getSheet(machine.sheetId);
@@ -75,7 +85,10 @@ export const activeOperators = (world: ProductionWorld, machine: Machine, step: 
     if (a.room !== machine.room || a.professionId !== sheet.profession) continue;
     const profile = world.profiles.get(a.inhabitantId);
     if (!profile || effectiveness(profile, a.professionId) <= 0) continue;
-    if (isProductive(world.spatial, world.population, profile, a, step, minuteOfDay)) count++;
+    const commute = cachedCommute(world, a);
+    if (isProductive(world.spatial, world.population, profile, a, step, minuteOfDay, commute)) {
+      count++;
+    }
   }
   return count;
 };

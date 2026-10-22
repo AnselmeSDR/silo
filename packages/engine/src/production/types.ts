@@ -59,6 +59,8 @@ export interface Machine {
 
 export interface ProductionState {
   machines: Machine[];
+  /** Commute in minutes per inhabitant, valid for one spatial `revision`; null when unreachable. */
+  commutes: Map<number, { revision: number; minutes: number | null }>;
 }
 
 /** The state the production system works on. */

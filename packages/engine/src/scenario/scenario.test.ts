@@ -41,6 +41,13 @@ describe("loadScenario", () => {
     expect(validateScenario(scenario).join("\n")).toContain(message);
   });
 
+  it("rejects an unknown production sheet or sector", () => {
+    const bad = { ...starterSilo, production: [{ sheetId: "nope", sector: "moon" }] };
+    const errors = validateScenario(bad);
+    expect(errors).toContain('production[0].sheetId "nope" is unknown');
+    expect(errors).toContain('production[0].sector "moon" is unknown');
+  });
+
   it("rejects non-JSON and non-objects", () => {
     expect(() => loadScenario("{")).toThrow(ScenarioError);
     expect(validateScenario([])).toHaveLength(1);

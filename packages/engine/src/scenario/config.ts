@@ -1,3 +1,4 @@
+import { getSheet } from "../production/sheets";
 import { SECTOR_TYPES, type SectorType } from "./sectors";
 
 export const SCENARIO_VERSION = 1;
@@ -26,6 +27,12 @@ export interface InitialStocks {
   spareParts: number;
 }
 
+/** A production line: a sheet of the production catalog installed in a room of a sector. */
+export interface ProductionLineConfig {
+  sheetId: string;
+  sector: SectorType;
+}
+
 export interface ScenarioConfig {
   version: typeof SCENARIO_VERSION;
   name: string;
@@ -34,6 +41,8 @@ export interface ScenarioConfig {
   topology: { levels: number; arteriesPerLevel: number };
   sectors: SectorAssignment[];
   stocks: InitialStocks;
+  /** Production lines, staffed at the start of the run; omitted means none. */
+  production?: ProductionLineConfig[];
 }
 
 export class ScenarioError extends Error {
@@ -132,6 +141,29 @@ const validateSectors = (
   return housingCapacity;
 };
 
+const validateProduction = (production: unknown, errors: string[]): void => {
+  if (production === undefined) return;
+  if (!Array.isArray(production)) {
+    errors.push("production must be an array");
+    return;
+  }
+  production.forEach((line: unknown, i) => {
+    const at = `production[${i}]`;
+    if (!isRecord(line)) {
+      errors.push(`${at} must be an object`);
+      return;
+    }
+    try {
+      getSheet(String(line.sheetId));
+    } catch {
+      errors.push(`${at}.sheetId "${String(line.sheetId)}" is unknown`);
+    }
+    if (!SECTOR_TYPES.includes(line.sector as SectorType)) {
+      errors.push(`${at}.sector "${String(line.sector)}" is unknown`);
+    }
+  });
+};
+
 /** Returns every problem found; an empty list means the value is a valid scenario. */
 export const validateScenario = (value: unknown): string[] => {
   if (!isRecord(value)) return ["scenario must be an object"];
@@ -174,6 +206,8 @@ export const validateScenario = (value: unknown): string[] => {
       if (!isInt(stocks[key], 0)) errors.push(`stocks.${key} must be an integer >= 0`);
     }
   }
+
+  validateProduction(value.production, errors);
 
   return errors;
 };
