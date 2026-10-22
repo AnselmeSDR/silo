@@ -34,6 +34,12 @@ config versionnée (population, topologie, secteurs par niveau/artère, stocks e
 le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
 `DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
 
+Stocks (`packages/engine/src/stocks`) : `createStocks`, `addStock` (nœud, type, capacité, perte par pas),
+`deposit`/`withdraw`/`lose`/`transfer` (bornés par le libre et la place, manque consigné dans `totals.shortage`),
+`reserve`/`releaseReservation`/`consumeReservation` (la quantité réservée reste dans `available` mais n'est plus
+libre), `verifyStocks` (bilan par stock et par type), `stocksSystem` (à placer en dernier : pertes, contrôle, ouverture
+du pas suivant). Les transferts ne vérifient pas l'accessibilité spatiale.
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
