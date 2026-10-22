@@ -8,6 +8,7 @@
     "build": "esbuild src/cli.ts --bundle --platform=node --format=esm --outfile=dist/cli.js",
     "start": "node dist/cli.js",
     "test": "vitest run",
+    "bench": "esbuild src/proto/bench.ts --bundle --platform=node --format=esm --outfile=dist/bench.js && node dist/bench.js",
     "typecheck": "tsc -p tsconfig.json"
   },
   "devDependencies": {

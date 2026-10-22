@@ -5,7 +5,12 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
+    "bench:render": "node proto/renderBench.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "build": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.15.0",
+    "vite": "^7.3.7"
   }
 }
