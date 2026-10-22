@@ -46,6 +46,14 @@ Stocks (`packages/engine/src/stocks`) : `createStocks`, `addStock` (nœud, type,
 libre), `verifyStocks` (bilan par stock et par type), `stocksSystem` (à placer en dernier : pertes, contrôle, ouverture
 du pas suivant). Les transferts ne vérifient pas l'accessibilité spatiale.
 
+Production (`packages/engine/src/production`) : fiches `PRODUCTION_SHEETS` (traitement de l'eau, culture
+hydroponique, turbine : intrants, sortie, durée, équipement, métier, opérateurs, capacité en lots parallèles),
+`addMachine` (câble une fiche à ses stocks), `productionSystem` (avant `stocksSystem`) : une machine n'avance
+que si l'équipement marche et que les opérateurs requis sont en présence productive avec une compétence réelle > 0 ;
+un lot ne démarre que si tous les intrants sont libres, il les consomme aussitôt ; sans opérateur les lots en cours
+sont en pause. `explainMachine` / `explainStock` expliquent flux et blocages (`totals.blockedSteps`).
+Pas encore branché dans `createWorld`.
+
 Observation et headless : `createWorld(config)` / `createScenarioSimulation(config)` (`world/`) assemblent
 l'état (spatial, population, mouvement, stocks). `createObserver(sim)` (`observation/`) est l'unique accès en
 lecture pour le rendu (`Observer` : copies simples, `summary()`) ; `packages/render` n'importe que ce type.
