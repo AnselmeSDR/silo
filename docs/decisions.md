@@ -42,7 +42,7 @@ Une graine seule ne garantit pas la reproductibilité si la version du moteur, l
 
 ## D-03 — Budget de performance et matériel cible (SIL-03)
 
-Statut : provisoire, à confirmer par le prototype SIL-12. Source : concept §15.4.
+Statut : provisoire ; première mesure par le prototype SIL-12 (voir D-07), à refaire avec le vrai moteur. Source : concept §15.4.
 
 ### Matériel de référence
 
@@ -313,3 +313,37 @@ Réf. concept §4.3, §7.1 · ticket SIL-07. Complète D-02 (pas fixe d'1 minute
 ### Limite
 
 Valeurs de départ, pas des vérités : calibrées par mesure au prototype, avec mise à jour de ce document.
+
+## D-07 — Mesures du prototype jetable (SIL-12)
+
+Statut : le budget D-03 est tenu avec une grande marge sur le prototype ; ce n'est **pas** une validation du moteur réel.
+
+### Ce qui a été mesuré
+
+Code jetable (`packages/engine/src/proto`, `packages/render/src/proto.ts`, `packages/tools/proto`), à ne pas réutiliser tel quel.
+
+- **Moteur** : 2 000 entités en tableaux typés, 3 systèmes (besoins, social, déplacement), ordre mélangé par PRNG par système (D-02), 12 niveaux.
+- **Rendu** : 2 000 silhouettes = 3 `InstancedMesh` (corps, tête, jambes), soit 6 000 instances, 16 appels de dessin, ≈ 594 000 triangles, 12 dalles, une lumière hémisphérique + une directionnelle (avec ou sans ombres 2048²), Three.js 0.160.0.
+- **Matériel** : MacBook Pro M2 Pro (matériel de référence D-03), Chrome 155 headless (GPU Metal), fenêtre 1280×800 à ×2, Node 22.14.
+- **Méthode** : D-03 (graine 42, 5 s d'échauffement, 60 s mesurées, 3 exécutions, médiane). Une exécution « rendu seul sans ombres » sur 3 a expiré : médiane sur 2.
+- **Commandes** : `pnpm --filter @silo/engine bench` et `node packages/tools/proto/renderBenchAll.mjs`.
+
+### Résultats (médiane des exécutions, p95 / p99 en ms)
+
+| Mesure                                                 | p95 | p99 | Cible p95 | Plafond p99 |
+| ------------------------------------------------------ | --- | --- | --------- | ----------- |
+| Pas moteur seul (Node)                                 | 0,5 | 0,8 | 10        | 14          |
+| Rendu seul, sans ombres (travail)                      | 1,4 | 1,6 | 16,6      | 20          |
+| Rendu seul, avec ombres (travail)                      | 1,9 | 2,1 | 16,6      | 20          |
+| Moteur + rendu, ombres (image)                         | 3,1 | 3,8 | 16,6      | 20          |
+| Moteur + rendu, ombres (pas moteur dans le navigateur) | 2,1 | 2,8 | 10        | 14          |
+
+« Travail » = mise à jour des instances + soumission + `gl.finish()` ; l'intervalle entre images reste à 16,7 ms (60 images/s) sur toutes les séries, avec un pic isolé de 33 ms en moteur + rendu.
+
+### Conclusion
+
+1. **Le rendu instancié de 2 000 habitants tient très largement dans le budget** (≈ 3 ms sur 16,6 ms moteur compris, ombres comprises) : la géométrie simplifiée de D-05 est faisable. La réserve de D-05 sur le rendu instancié est levée pour les habitants.
+2. **Le budget moteur à 2 000 entités tient pour une simulation simple** (0,5 ms), mais ce prototype n'a ni pathfinding, ni réseaux, ni mémoires, ni journal. Les 10 ms ne sont donc pas démontrés pour le moteur réel : le coût réel sera à mesurer par système au fil des tickets, avec le même script.
+3. Non mesuré ici : décor réel (niveaux, artères), coupe, brouillard, interpolation à ×1 (D-06), Web Worker (D-01), autres machines. À refaire dans l'étape 1 avec la vraie scène.
+4. **D-03 reste en vigueur sans changement** (aucune cible ajustée). Pas de WebAssembly à prévoir à ce stade (D-01).
+5. Mesure fragile : en fenêtre visible, `requestAnimationFrame` s'arrête si l'écran se met en veille ; le script utilise Chrome headless. Sur écran 120 Hz les intervalles sont de 8,3 ms.
