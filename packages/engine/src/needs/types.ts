@@ -1,3 +1,4 @@
+import type { Decisions } from "../decision";
 import type { MovementWorld } from "../movement";
 import type { Population } from "../population";
 import type { StocksWorld } from "../stocks";
@@ -46,4 +47,6 @@ export interface NeedsWorld
   needs: Needs;
   /** When given, an incapacitated inhabitant gets `absentUntilStep` set, so the work side sees an absence. */
   profiles?: Map<number, WorkProfile>;
+  /** When present, the decision loop starts the trips: the needs system only consumes and updates. */
+  decisions?: Decisions;
 }

@@ -106,7 +106,7 @@ const consume = (world: NeedsWorld, id: number, kind: Consumable): boolean => {
 /** Heads for `node` when movement is wired in; without it the inhabitant just stays "seeking". */
 const tryReach = (world: NeedsWorld, id: number, node: number): void => {
   const { movement, spatial, population } = world;
-  if (!movement || !spatial || isTravelling(movement, id)) return;
+  if (world.decisions || !movement || !spatial || isTravelling(movement, id)) return;
   requestTrip({ spatial, population, movement }, id, node);
 };
 

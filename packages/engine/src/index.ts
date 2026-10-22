@@ -14,3 +14,4 @@ export * from "./headless";
 export * from "./world";
 export * from "./needs";
 export * from "./save";
+export * from "./decision";

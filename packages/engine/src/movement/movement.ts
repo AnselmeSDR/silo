@@ -54,6 +54,15 @@ const routeBetween = (world: MovementWorld, from: NodeId, to: NodeId): Path | nu
 
 export const isTravelling = (movement: Movement, id: number): boolean => id in movement.trips;
 
+/** Destination of the trip in progress, null when not travelling. */
+export const destinationOf = (movement: Movement, id: number): NodeId | null =>
+  movement.trips[id]?.destination ?? null;
+
+/** Drops the trip in progress: the inhabitant stays on the last node reached (an edge under way is not resumed). */
+export const cancelTrip = (movement: Movement, id: number): void => {
+  delete movement.trips[id];
+};
+
 /** Starts a trip from the inhabitant's position; false if none starts (dead, travelling, unreachable). */
 export const requestTrip = (world: MovementWorld, id: number, destination: NodeId): boolean => {
   const { population, movement, spatial } = world;
