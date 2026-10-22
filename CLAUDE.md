@@ -27,6 +27,13 @@ Déplacements (`packages/engine/src/movement`) : `createMovement`, `requestTrip(
 capacité par pas et par type de passage (file d'attente si saturé), routes en cache jusqu'au changement de
 `revision` ; la congestion ne déclenche aucun recalcul.
 
+Scénario (`packages/engine/src/scenario`) : `loadScenario(json)` valide (toutes les erreurs listées, `ScenarioError`) une
+config versionnée (population, topologie, secteurs par niveau/artère, stocks en sous-unités D-06) ;
+`SECTOR_CATALOG` (17 secteurs du §3.4) ; `starterSilo` (24 niveaux × 4 artères, 2 000 habitants,
+2 400 lits). Chaque artère de chaque niveau a exactement un secteur. `buildScenarioModel(config)` construit
+le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
+`DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
