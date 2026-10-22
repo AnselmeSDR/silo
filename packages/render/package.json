@@ -7,13 +7,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "@silo/engine": "workspace:*",
     "three": "0.160.0"
   },
   "devDependencies": {
-    "@types/three": "0.160.0"
+    "@types/three": "0.160.0",
+    "vitest": "^3.2.7"
   }
 }

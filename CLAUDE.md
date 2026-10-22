@@ -63,6 +63,11 @@ l'état (spatial, population, mouvement, stocks, production). Le `Summary` expos
 lecture pour le rendu (`Observer` : copies simples, `summary()`) ; `packages/render` n'importe que ce type.
 `runHeadless(config, days)` + CLI : `pnpm engine [scenario.json] [--days N]` affiche le résumé final.
 
+Rendu du puits (`packages/render/src/shaft`) : `createShaftLayout(config)` (cotes D-08 `SHAFT_DIMENSIONS`, niveaux,
+angles d'artères, hélice de l'escalier, pont alterné 0°/180°, pur et testé) et `buildShaft(config)` (`Group` Three.js :
+noyau, escalier en éventail instancié à parapets pleins continus, paliers annulaires, passerelles, artères). Décor
+statique, matières mates désaturées (D-05) ; `main.ts` l'affiche pour `starterSilo`.
+
 Besoins (`packages/engine/src/needs`) : `createNeeds({ count, seed })` (jauges entières 0–10 000 pour eau,
 nourriture, sommeil, santé ; traits individuels `metabolism` et `resilience`), `needsSystem` (`System<NeedsWorld>`, à
 placer avant `movementSystem`, `stocksSystem` en dernier). L'eau et la nourriture se consomment dans un stock réel du
