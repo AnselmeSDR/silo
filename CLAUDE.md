@@ -46,6 +46,14 @@ Stocks (`packages/engine/src/stocks`) : `createStocks`, `addStock` (nœud, type,
 libre), `verifyStocks` (bilan par stock et par type), `stocksSystem` (à placer en dernier : pertes, contrôle, ouverture
 du pas suivant). Les transferts ne vérifient pas l'accessibilité spatiale.
 
+Besoins (`packages/engine/src/needs`) : `createNeeds({ count, seed })` (jauges entières 0–10 000 pour eau,
+nourriture, sommeil, santé ; traits individuels `metabolism` et `resilience`), `needsSystem` (`System<NeedsWorld>`, à
+placer avant `movementSystem`, `stocksSystem` en dernier). L'eau et la nourriture se consomment dans un stock réel du
+nœud où se trouve l'habitant (`withdraw`) ; sinon il est `seeking` et, si `movement`/`spatial` sont dans le monde, part
+vers un stock non vide. `productivityFactor` (0–1, à multiplier par `effectiveness`), `incapacitated` (seuil selon la
+résilience) et, si `profiles` est fourni, `absentUntilStep`. La santé baisse quand eau ou nourriture est à 0 (statut
+`ill` avec hystérésis), sans mort à ce stade.
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant

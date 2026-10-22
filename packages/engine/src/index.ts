@@ -7,3 +7,4 @@ export * from "./work";
 export * from "./core";
 export * from "./scenario";
 export * from "./stocks";
+export * from "./needs";
