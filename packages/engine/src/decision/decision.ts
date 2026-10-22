@@ -1,5 +1,5 @@
 import { timeOfStep, type System } from "../core";
-import { isTravelling, requestTrip } from "../movement";
+import { cancelTrip, destinationOf, requestTrip } from "../movement";
 import { SEEK_THRESHOLD, needsOf } from "../needs";
 import { isAlive } from "../population";
 import { freeOf } from "../stocks";
@@ -91,7 +91,10 @@ export const evaluate = (world: DecisionWorld, id: number, minuteOfDay: number):
 /** Heads for `target`: "success" when already there, "progress" when travelling, else "blocked". */
 const goTo = (world: DecisionWorld, id: number, target: number): Attempt["result"] | "blocked" => {
   if (world.population.inhabitants[id]!.position === target) return "success";
-  if (isTravelling(world.movement, id)) return "progress";
+  const current = destinationOf(world.movement, id);
+  if (current === target) return "progress";
+  // Heading elsewhere: the chosen action wins, so the old trip is replaced (back off if unreachable).
+  if (current !== null) cancelTrip(world.movement, id);
   return requestTrip(world, id, target) ? "progress" : "blocked";
 };
 

@@ -72,6 +72,35 @@ describe("choice by needs and commitments", () => {
   });
 });
 
+describe("an urgent need interrupts a trip", () => {
+  it("thirsty on the way to the post: heads for the water stock instead", () => {
+    const world = makeWorld();
+    const assignment = post(world);
+    const waterNode = rooms.find(
+      (r) => r.id !== assignment.room && r.id !== world.population.inhabitants[0]!.residence,
+    )!.id;
+    addStock(world.stocks, {
+      node: waterNode,
+      kind: "water",
+      capacity: 10_000_000,
+      initial: 10_000_000,
+    });
+    commit(world.decisions, assignment);
+    const sim = simulate(world, 0);
+    // Keep the inhabitant fed and watered until the commute starts.
+    while (world.movement.trips[0] === undefined && sim.time.minuteOfDay < 700) {
+      Object.assign(needsOf(world.needs, 0).gauges, { water: GAUGE_MAX, food: GAUGE_MAX });
+      sim.stepOnce();
+    }
+    expect(world.movement.trips[0]?.destination).toBe(assignment.room);
+
+    needsOf(world.needs, 0).gauges.water = 1_000;
+    sim.stepOnce();
+    expect(world.decisions.last[0]).toMatchObject({ action: "drink", result: "progress" });
+    expect(world.movement.trips[0]?.destination).toBe(waterNode);
+  });
+});
+
 describe("an impossible action fails with a recorded cause", () => {
   it("thirsty with no water anywhere: no-resource", () => {
     const world = makeWorld();
