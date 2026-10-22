@@ -46,8 +46,20 @@ Stocks (`packages/engine/src/stocks`) : `createStocks`, `addStock` (nœud, type,
 libre), `verifyStocks` (bilan par stock et par type), `stocksSystem` (à placer en dernier : pertes, contrôle, ouverture
 du pas suivant). Les transferts ne vérifient pas l'accessibilité spatiale.
 
+Production (`packages/engine/src/production`) : fiches `PRODUCTION_SHEETS` (traitement de l'eau, culture
+hydroponique, turbine : intrants, sortie, durée, équipement, métier, opérateurs, capacité en lots parallèles),
+`addMachine` (câble une fiche à ses stocks), `productionSystem` (avant `stocksSystem`) : une machine n'avance
+que si l'équipement marche et que les opérateurs requis sont en présence productive avec une compétence réelle > 0 ;
+un lot ne démarre que si tous les intrants sont libres, il les consomme aussitôt ; sans opérateur les lots en cours
+sont en pause. `explainMachine` / `explainStock` expliquent flux et blocages (`totals.blockedSteps`).
+Branché dans le scénario : `config.production` (optionnel, `{ sheetId, sector }[]`, validé par `loadScenario`) ;
+`createWorld` crée un stock localisé par ressource (secteur de stockage fixe, capacité = 2 × stock initial), installe
+chaque ligne dans le premier local de son secteur et l'équipe de 3 équipes à relais d'habitants disponibles, posés
+sur place (le trajet domicile-travail n'est pas simulé). Ordre des systèmes : production, déplacements, stocks.
+
 Observation et headless : `createWorld(config)` / `createScenarioSimulation(config)` (`world/`) assemblent
-l'état (spatial, population, mouvement, stocks). `createObserver(sim)` (`observation/`) est l'unique accès en
+l'état (spatial, population, mouvement, stocks, production). Le `Summary` expose aussi `production`
+(produit/consommé par ressource, état des machines). `createObserver(sim)` (`observation/`) est l'unique accès en
 lecture pour le rendu (`Observer` : copies simples, `summary()`) ; `packages/render` n'importe que ce type.
 `runHeadless(config, days)` + CLI : `pnpm engine [scenario.json] [--days N]` affiche le résumé final.
 

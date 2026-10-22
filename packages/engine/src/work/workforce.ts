@@ -105,11 +105,14 @@ export const isProductive = (
   assignment: Assignment,
   step: number,
   minuteOfDay: number,
+  /** Commute already known by the caller (it changes only with the spatial `revision`); computed when omitted. */
+  knownCommute?: number | null,
 ): boolean => {
   const inhabitant = getInhabitant(population, assignment.inhabitantId);
   if (inhabitant.health !== "healthy" || isAbsent(profile, step)) return false;
   if (inhabitant.position !== assignment.room) return false;
-  const commute = commuteOf(spatial, population, assignment) ?? 0;
+  const commute =
+    (knownCommute === undefined ? commuteOf(spatial, population, assignment) : knownCommute) ?? 0;
   return phaseAt(planDay(assignment.shift, commute), minuteOfDay) === "work";
 };
 

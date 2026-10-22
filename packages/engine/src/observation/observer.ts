@@ -1,10 +1,12 @@
 import { isAlive, type HealthStatus } from "../population";
 import type { Simulation } from "../core";
+import { getSheet } from "../production";
+import { RESOURCE_KINDS, totalOf } from "../stocks";
 import type { World } from "../world";
 import type { InhabitantView, Observer, Summary } from "./types";
 
 export const createObserver = (sim: Simulation<World>): Observer => {
-  const { population, movement } = sim.state;
+  const { population, movement, stocks, production } = sim.state;
 
   const view = (id: number): InhabitantView | undefined => {
     const inhabitant = population.inhabitants[id];
@@ -43,7 +45,21 @@ export const createObserver = (sim: Simulation<World>): Observer => {
           byHealth,
         },
         movement: { ...movement.stats },
-        stocks: { ...sim.state.stocks },
+        stocks: {
+          waterMl: totalOf(stocks, "water"),
+          foodKcal: totalOf(stocks, "food"),
+          energyWs: totalOf(stocks, "energy"),
+          spareParts: totalOf(stocks, "spareParts"),
+        },
+        production: {
+          produced: Object.fromEntries(RESOURCE_KINDS.map((k) => [k, stocks.totals[k].produced])),
+          consumed: Object.fromEntries(RESOURCE_KINDS.map((k) => [k, stocks.totals[k].consumed])),
+          machines: production.machines.map((m) => ({
+            label: getSheet(m.sheetId).label,
+            status: m.status,
+            completed: m.totals.completed,
+          })),
+        },
       };
     },
   };

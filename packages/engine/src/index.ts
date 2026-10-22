@@ -7,6 +7,7 @@ export * from "./work";
 export * from "./core";
 export * from "./scenario";
 export * from "./stocks";
+export * from "./production";
 
 export * from "./observation";
 export * from "./headless";
