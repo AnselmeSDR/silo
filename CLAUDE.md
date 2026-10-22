@@ -22,6 +22,10 @@ Modèle spatial (`packages/engine/src/spatial`) : graphe non orienté à ids num
 coursive, nœud d'artère, local), cotes et temps de D-08 ; `buildSpatialModel({ levels, arteriesPerLevel })`,
 `findPath` (Dijkstra, ms), `unreachableLevels`. Un local « inaccessible » est exclu des trajets.
 
+Scénario (`packages/engine/src/scenario`) : `loadScenario(json)` valide (toutes les erreurs listées, `ScenarioError`) une
+config versionnée (population, topologie, secteurs par niveau/artère, stocks en sous-unités D-06) ;
+`SECTOR_CATALOG` (17 secteurs du §3.4) ; `starterSilo` (24 niveaux × 4 artères, 2 000 habitants).
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
