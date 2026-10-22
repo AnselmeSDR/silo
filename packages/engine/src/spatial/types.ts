@@ -81,6 +81,8 @@ export interface BuildOptions {
   levels: number;
   /** Arteries per level, evenly spaced (D-08: prototype 2, target 4). */
   arteriesPerLevel: number;
+  /** Number of occupants a room can host; scenario data, no default. */
+  roomCapacity: (level: number, artery: number, slot: number) => number;
   /** Picks the function of a room; defaults to housing. */
   roomFunction?: (level: number, artery: number, slot: number) => RoomFunction;
 }

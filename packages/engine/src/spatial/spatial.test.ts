@@ -10,8 +10,9 @@ import {
   unreachableLevels,
 } from "./index";
 
-const target = buildSpatialModel({ levels: 24, arteriesPerLevel: 4 });
-const prototype = buildSpatialModel({ levels: 12, arteriesPerLevel: 2 });
+const twoBeds = (): number => 2;
+const target = buildSpatialModel({ levels: 24, arteriesPerLevel: 4, roomCapacity: twoBeds });
+const prototype = buildSpatialModel({ levels: 12, arteriesPerLevel: 2, roomCapacity: twoBeds });
 
 const landing = (level: number): number =>
   target.nodes.findIndex((n) => n.kind === "landing" && n.level === level);
@@ -35,6 +36,7 @@ describe("rooms", () => {
     const model = buildSpatialModel({
       levels: 2,
       arteriesPerLevel: 2,
+      roomCapacity: twoBeds,
       roomFunction: (level) => (level === 0 ? "canteen" : "workshop"),
     });
     expect(new Set(rooms(model).map((r) => r.function))).toEqual(new Set(["canteen", "workshop"]));
@@ -99,15 +101,15 @@ describe("graph", () => {
   });
 
   it("is deterministic", () => {
-    expect(buildSpatialModel({ levels: 4, arteriesPerLevel: 4 })).toEqual(
-      buildSpatialModel({ levels: 4, arteriesPerLevel: 4 }),
+    expect(buildSpatialModel({ levels: 4, arteriesPerLevel: 4, roomCapacity: twoBeds })).toEqual(
+      buildSpatialModel({ levels: 4, arteriesPerLevel: 4, roomCapacity: twoBeds }),
     );
   });
 });
 
 describe("inaccessible rooms", () => {
   it("cannot be reached", () => {
-    const model = buildSpatialModel({ levels: 3, arteriesPerLevel: 2 });
+    const model = buildSpatialModel({ levels: 3, arteriesPerLevel: 2, roomCapacity: twoBeds });
     const room = rooms(model)[0]!;
     setServiceState(model, room.id, "inaccessible");
     expect(getRoom(model, room.id).service).toBe("inaccessible");

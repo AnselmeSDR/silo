@@ -19,7 +19,6 @@ const ARTERY_MODULE_CM = 600;
 const DOOR_CM = 300;
 const MODULES_PER_ARTERY = 5;
 const ROOM_AREA_M2 = 29;
-const HOUSING_CAPACITY = 2;
 const FLAT_MM_S = 1300;
 const STAIR_UP_MM_S = 700;
 const STAIR_DOWN_MM_S = 900;
@@ -115,7 +114,7 @@ export const buildSpatialModel = (options: BuildOptions): SpatialModel => {
             angleDeg,
             artery,
             function: roomFunction(level, artery, index * 2 + side),
-            capacity: HOUSING_CAPACITY,
+            capacity: options.roomCapacity(level, artery, index * 2 + side),
             areaM2: ROOM_AREA_M2,
             access: "open",
             service: "available",

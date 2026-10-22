@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { rooms } from "../spatial";
 import {
   SECTOR_CATALOG,
   SECTOR_TYPES,
+  buildScenarioModel,
   ScenarioError,
   loadScenario,
   starterSilo,
@@ -30,6 +32,7 @@ describe("loadScenario", () => {
     ],
     ["fractional stock", (s) => (s.stocks.waterMl = 1.5), "stocks.waterMl"],
     ["too little housing", (s) => (s.population.total = 99999), "below the population"],
+    ["unassigned artery", (s) => s.sectors.pop(), "has no sector"],
     ["wrong version", (s) => (s.version = 2), "version"],
   ])("rejects %s", (_, mutate, message) => {
     const scenario = clone();
@@ -72,5 +75,31 @@ describe("starterSilo", () => {
       0,
     );
     expect(cells).toBe(24 * 4);
+  });
+});
+
+describe("buildScenarioModel", () => {
+  const model = buildScenarioModel(starterSilo);
+  const housing = rooms(model).filter((r) => r.function === "housing");
+
+  it("offers at least 2 000 beds in housing rooms", () => {
+    expect(housing.reduce((n, r) => n + r.capacity, 0)).toBeGreaterThanOrEqual(
+      starterSilo.population.total,
+    );
+  });
+
+  it("takes room capacity and function from the sector assignments", () => {
+    expect(new Set(housing.map((r) => r.capacity))).toEqual(new Set([5]));
+    const health = rooms(model).filter((r) => r.level === 6);
+    expect(health.every((r) => r.function === "infirmary" && r.capacity === 2)).toBe(true);
+  });
+
+  it("follows a changed roomCapacity", () => {
+    const scenario = clone();
+    scenario.sectors[7].roomCapacity = 6;
+    const beds = rooms(buildScenarioModel(scenario))
+      .filter((r) => r.function === "housing")
+      .reduce((n, r) => n + r.capacity, 0);
+    expect(beds).toBe(12 * 4 * 10 * 6);
   });
 });

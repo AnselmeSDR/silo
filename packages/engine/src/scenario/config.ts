@@ -89,6 +89,7 @@ const validateSectors = (
     errors.push("sectors must be a non-empty array");
     return 0;
   }
+  const errorsBefore = errors.length;
   const taken = new Set<string>();
   let housingCapacity = 0;
   sectors.forEach((a: unknown, i) => {
@@ -121,6 +122,13 @@ const validateSectors = (
       }
     }
   });
+  if (errors.length === errorsBefore) {
+    for (let l = 0; l < levels; l++) {
+      for (let k = 0; k < arteries; k++) {
+        if (!taken.has(`${l}/${k}`)) errors.push(`level ${l} artery ${k} has no sector`);
+      }
+    }
+  }
   return housingCapacity;
 };
 
