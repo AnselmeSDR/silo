@@ -34,6 +34,12 @@ config versionnée (population, topologie, secteurs par niveau/artère, stocks e
 le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
 `DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
 
+Travail (`packages/engine/src/work`) : catalogue `PROFESSIONS` (25 métiers du §5.2.1 en données, lieux = types de secteur du catalogue SIL-16, `sectorOfRoom`),
+`createAssignment` (lieu + métier + `Shift`), `planDay` / `phaseAt` (trajet, prise de poste, travail, pause,
+relève, retour), `relayShifts` (équipes à relais), `availableWorkforce` (main-d'œuvre ≠ population),
+`isProductive` (une absence ou un trajet bloqué n'est jamais une présence productive), `effectiveness`
+(fonction attribuée ≠ compétence réelle ≠ volonté).
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
