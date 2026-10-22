@@ -24,7 +24,7 @@ export const stringifyCanonical = (value: unknown): string =>
 
 /** Captures the run as plain data; `scenario` is the config it started from. */
 export const createSave = (sim: Simulation<SaveWorld>, scenario: ScenarioConfig): SaveFile => {
-  const { spatial, population, movement, stocks } = sim.state;
+  const { spatial, population, movement, stocks, needs, profiles, assignments } = sim.state;
   const { levels, arteriesPerLevel, nodes, edges, revision } = spatial;
   const snapshot = sim.snapshot();
   return {
@@ -37,6 +37,8 @@ export const createSave = (sim: Simulation<SaveWorld>, scenario: ScenarioConfig)
     entities: { inhabitants: population.inhabitants },
     // Passages used this step are reset at the start of the next one: not state.
     movement: { ...movement, usage: {} },
+    needs,
+    work: { profiles: Object.fromEntries(profiles), assignments },
     stocks,
   };
 };
@@ -65,6 +67,9 @@ export const restoreWorld = (save: SaveFile): SaveWorld => {
     spatial: { ...save.world.spatial, links: buildLinks(nodes.length, edges) },
     population: { inhabitants: save.entities.inhabitants },
     movement: save.movement,
+    needs: save.needs,
+    profiles: new Map(Object.entries(save.work.profiles).map(([id, p]) => [Number(id), p])),
+    assignments: save.work.assignments,
     stocks: save.stocks,
   };
 };

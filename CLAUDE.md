@@ -34,12 +34,38 @@ config versionnée (population, topologie, secteurs par niveau/artère, stocks e
 le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
 `DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
 
+Travail (`packages/engine/src/work`) : catalogue `PROFESSIONS` (25 métiers du §5.2.1 en données, lieux = types de secteur du catalogue SIL-16, `sectorOfRoom`),
+`createAssignment` (lieu + métier + `Shift`), `planDay` / `phaseAt` (trajet, prise de poste, travail, pause,
+relève, retour), `relayShifts` (équipes à relais), `availableWorkforce` (main-d'œuvre ≠ population),
+`isProductive` (une absence ou un trajet bloqué n'est jamais une présence productive), `effectiveness`
+(fonction attribuée ≠ compétence réelle ≠ volonté).
+
+Stocks (`packages/engine/src/stocks`) : `createStocks`, `addStock` (nœud, type, capacité, perte par pas),
+`deposit`/`withdraw`/`lose`/`transfer` (bornés par le libre et la place, manque consigné dans `totals.shortage`),
+`reserve`/`releaseReservation`/`consumeReservation` (la quantité réservée reste dans `available` mais n'est plus
+libre), `verifyStocks` (bilan par stock et par type), `stocksSystem` (à placer en dernier : pertes, contrôle, ouverture
+du pas suivant). Les transferts ne vérifient pas l'accessibilité spatiale.
+
+Observation et headless : `createWorld(config)` / `createScenarioSimulation(config)` (`world/`) assemblent
+l'état (spatial, population, mouvement, stocks). `createObserver(sim)` (`observation/`) est l'unique accès en
+lecture pour le rendu (`Observer` : copies simples, `summary()`) ; `packages/render` n'importe que ce type.
+`runHeadless(config, days)` + CLI : `pnpm engine [scenario.json] [--days N]` affiche le résumé final.
+
+Besoins (`packages/engine/src/needs`) : `createNeeds({ count, seed })` (jauges entières 0–10 000 pour eau,
+nourriture, sommeil, santé ; traits individuels `metabolism` et `resilience`), `needsSystem` (`System<NeedsWorld>`, à
+placer avant `movementSystem`, `stocksSystem` en dernier). L'eau et la nourriture se consomment dans un stock réel du
+nœud où se trouve l'habitant (`withdraw`) ; sinon il est `seeking` et, si `movement`/`spatial` sont dans le monde, part
+vers un stock non vide. `productivityFactor` (0–1, à multiplier par `effectiveness`), `incapacitated` (seuil selon la
+résilience) et, si `profiles` est fourni, `absentUntilStep`. La santé baisse quand eau ou nourriture est à 0 (statut
+`ill` avec hystérésis), sans mort à ce stade.
+
 Sauvegarde (`packages/engine/src/save`) : `serializeSave(sim, config)` (JSON à clés triées, D-04),
 `parseSave(json)` (migre puis valide, `SaveError` listant les problèmes), `loadGame(json, systems)` rend
 `{ simulation, scenario }` qui continue comme la partie ininterrompue (`Simulation.snapshot()` /
 option `resume`). `formatVersion` = `FORMAT_VERSION` ; migrations `n → n+1` dans `migrate.ts` ; un fichier plus
-récent ou invalide est refusé. Les liens du graphe sont dérivés (`buildLinks`), pas sauvés. Pas d'E/S fichier
-dans le moteur (écriture atomique et gzip à la charge de l'appelant).
+récent ou invalide est refusé. Le format v1 contient spatial, habitants, besoins, mouvement, stocks (par nœud, avec réservations),
+profils et affectations de travail (`SaveWorld`) ; les liens du graphe sont dérivés (`buildLinks`), pas sauvés.
+Pas d'E/S dans le moteur : écriture atomique et gzip dans la couche Node qui écrit le fichier.
 
 ## Décisions
 

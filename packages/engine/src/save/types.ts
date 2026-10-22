@@ -1,19 +1,22 @@
 import type { SimulationSnapshot } from "../core";
 import type { Movement, MovementWorld } from "../movement";
+import type { Needs } from "../needs";
 import type { Inhabitant } from "../population";
-import type { InitialStocks, ScenarioConfig } from "../scenario";
+import type { ScenarioConfig } from "../scenario";
 import type { SpatialModel } from "../spatial";
+import type { Stocks, StocksWorld } from "../stocks";
+import type { Assignment, WorkProfile } from "../work";
 
 /** Current schema version of save files (D-04): one increment per schema change. */
 export const FORMAT_VERSION = 1;
 export const ENGINE_VERSION = "0.1.0";
 
-/** Resource stocks, integers in the smallest sub-unit of D-06. */
-export type Stocks = InitialStocks;
-
 /** The whole mutable state of a run. */
-export interface SaveWorld extends MovementWorld {
-  stocks: Stocks;
+export interface SaveWorld extends MovementWorld, StocksWorld {
+  needs: Needs;
+  /** Work profile by inhabitant id. */
+  profiles: Map<number, WorkProfile>;
+  assignments: Assignment[];
 }
 
 /** Spatial model without the derived `links`, rebuilt on load. */
@@ -30,6 +33,8 @@ export interface SaveFile {
   world: { spatial: SavedSpatial };
   entities: { inhabitants: Inhabitant[] };
   movement: Movement;
+  needs: Needs;
+  work: { profiles: Record<number, WorkProfile>; assignments: Assignment[] };
   stocks: Stocks;
 }
 

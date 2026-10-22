@@ -1,4 +1,5 @@
 import { validateScenario } from "../scenario";
+import { RESOURCE_KINDS, verifyStocks, type Stocks } from "../stocks";
 import { FORMAT_VERSION } from "./types";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -9,7 +10,6 @@ const isInt = (value: unknown, min = 0): value is number =>
 
 const isU32 = (value: unknown): boolean => isInt(value) && (value as number) <= 0xffffffff;
 
-const STOCK_KEYS = ["waterMl", "foodKcal", "energyWs", "spareParts"];
 const HEALTH = ["healthy", "ill", "injured", "dead"];
 
 /** Returns every structural problem of a migrated save; an empty list means it can be restored. */
@@ -95,11 +95,58 @@ export const validateSave = (data: unknown): string[] => {
     }
   }
 
-  if (!isRecord(data.stocks)) errors.push("stocks must be an object");
-  else {
-    for (const key of STOCK_KEYS) {
-      if (!isInt(data.stocks[key])) errors.push(`stocks.${key} must be an integer >= 0`);
+  const needs = isRecord(data.needs) ? data.needs.byInhabitant : undefined;
+  if (!Array.isArray(needs)) errors.push("needs.byInhabitant must be an array");
+  else if (Array.isArray(entities) && needs.length !== entities.length) {
+    errors.push("needs.byInhabitant must hold one entry per inhabitant");
+  } else {
+    needs.forEach((n: unknown, i) => {
+      if (!isRecord(n) || !isRecord(n.gauges) || !isRecord(n.traits)) {
+        errors.push(`needs.byInhabitant[${i}] needs gauges and traits`);
+      }
+    });
+  }
+
+  const work = data.work;
+  if (!isRecord(work) || !isRecord(work.profiles) || !Array.isArray(work.assignments)) {
+    errors.push("work needs profiles and assignments");
+  } else {
+    const count = Array.isArray(entities) ? entities.length : 0;
+    for (const id of Object.keys(work.profiles)) {
+      if (!isInt(Number(id)) || Number(id) >= count) {
+        errors.push(`work.profiles.${id} refers to an unknown inhabitant`);
+      }
     }
+    work.assignments.forEach((a: unknown, i) => {
+      const at = `work.assignments[${i}]`;
+      if (!isRecord(a) || !isInt(a.inhabitantId) || a.inhabitantId >= count) {
+        errors.push(`${at}.inhabitantId must be an existing inhabitant`);
+      } else if (!isInt(a.room) || a.room >= nodeCount) {
+        errors.push(`${at}.room must be an existing node`);
+      }
+    });
+  }
+
+  const stocks = data.stocks;
+  if (
+    !isRecord(stocks) ||
+    !Array.isArray(stocks.stocks) ||
+    !isRecord(stocks.reservations) ||
+    !isInt(stocks.nextReservationId) ||
+    !isRecord(stocks.totals) ||
+    !RESOURCE_KINDS.every((kind) => isRecord((stocks.totals as Record<string, unknown>)[kind]))
+  ) {
+    errors.push("stocks needs stocks, reservations, nextReservationId and totals per resource");
+  } else {
+    stocks.stocks.forEach((st: unknown, i) => {
+      const at = `stocks.stocks[${i}]`;
+      if (!isRecord(st) || st.id !== i) errors.push(`${at}.id must equal its index`);
+      else if (!isInt(st.node) || st.node >= nodeCount) {
+        errors.push(`${at}.node must be an existing node`);
+      }
+    });
+    // The balance must hold: a save that does not add up is damaged, not just old.
+    if (errors.length === 0) errors.push(...verifyStocks(stocks as unknown as Stocks));
   }
   return errors;
 };
