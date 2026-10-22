@@ -71,6 +71,15 @@ vers un stock non vide. `productivityFactor` (0–1, à multiplier par `effectiv
 résilience) et, si `profiles` est fourni, `absentUntilStep`. La santé baisse quand eau ou nourriture est à 0 (statut
 `ill` avec hystérésis), sans mort à ce stade.
 
+Sauvegarde (`packages/engine/src/save`) : `serializeSave(sim, config)` (JSON à clés triées, D-04),
+`parseSave(json)` (migre puis valide, `SaveError` listant les problèmes), `loadGame(json, systems)` rend
+`{ simulation, scenario }` qui continue comme la partie ininterrompue (`Simulation.snapshot()` /
+option `resume`). `formatVersion` = `FORMAT_VERSION` ; migrations `n → n+1` dans `migrate.ts` ; un fichier plus
+récent ou invalide est refusé. Le format v1 contient spatial, habitants, besoins, mouvement, stocks (par nœud, avec réservations),
+profils et affectations de travail (`SaveWorld`) ; les liens du graphe sont dérivés (`buildLinks`), pas sauvés.
+Pas d'E/S dans le moteur : `packages/tools` (`writeSaveFile` / `readSaveFile`) écrit le fichier de façon
+atomique (temporaire puis renommage) et en gzip si le nom finit par `.gz`.
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
