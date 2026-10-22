@@ -18,6 +18,10 @@ aucune dépendance au DOM ni à Three.js : Node pour les essais, Web Worker pour
 (`packages/render`) ne lit que l'état exposé. Pas fixe d'1 min simulée, déterministe (graine + un flux PRNG
 par système), sauvegarde JSON versionnée. Code jetable : dossiers `proto/` (ne pas réutiliser).
 
+Modèle spatial (`packages/engine/src/spatial`) : graphe non orienté à ids numériques (palier, jonction de
+coursive, nœud d'artère, local), cotes et temps de D-08 ; `buildSpatialModel({ levels, arteriesPerLevel })`,
+`findPath` (Dijkstra, ms), `unreachableLevels`. Un local « inaccessible » est exclu des trajets.
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
