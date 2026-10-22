@@ -34,6 +34,11 @@ config versionnée (population, topologie, secteurs par niveau/artère, stocks e
 le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
 `DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
 
+Observation et headless : `createWorld(config)` / `createScenarioSimulation(config)` (`world/`) assemblent
+l'état (spatial, population, mouvement, stocks). `createObserver(sim)` (`observation/`) est l'unique accès en
+lecture pour le rendu (`Observer` : copies simples, `summary()`) ; `packages/render` n'importe que ce type.
+`runHeadless(config, days)` + CLI : `pnpm engine [scenario.json] [--days N]` affiche le résumé final.
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant

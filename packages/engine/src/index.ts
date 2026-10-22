@@ -5,3 +5,6 @@ export * from "./spatial";
 export * from "./testing";
 export * from "./core";
 export * from "./scenario";
+export * from "./observation";
+export * from "./headless";
+export * from "./world";
