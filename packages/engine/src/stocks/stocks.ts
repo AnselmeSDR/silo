@@ -1,6 +1,9 @@
 import type { System } from "../core";
 import {
+  CAUSES,
   RESOURCE_KINDS,
+  type Cause,
+  type JournalEntry,
   type ResourceKind,
   type Stock,
   type StockOptions,
@@ -10,7 +13,16 @@ import {
 
 const isQuantity = (value: number, min: number): boolean => Number.isInteger(value) && value >= min;
 
-export const createStocks = (): Stocks => ({
+export const DEFAULT_JOURNAL_LIMIT = 10_000;
+
+export const createStocks = (journalLimit = DEFAULT_JOURNAL_LIMIT): Stocks => {
+  if (!isQuantity(journalLimit, 1)) throw new Error("journalLimit must be an integer >= 1");
+  return newStocks(journalLimit);
+};
+
+const newStocks = (journalLimit: number): Stocks => ({
+  step: 0,
+  journal: { limit: journalLimit, entries: [], dropped: 0 },
   stocks: [],
   reservations: {},
   nextReservationId: 0,
@@ -47,6 +59,33 @@ export const addStock = (
   return id;
 };
 
+/** Records a variation (or a shortage) with its cause; nothing is logged when nothing happened. */
+const record = (
+  stocks: Stocks,
+  stock: Stock,
+  cause: Cause,
+  delta: number,
+  shortage = 0,
+  counterpart?: number,
+): void => {
+  if (delta === 0 && shortage === 0) return;
+  const entry: JournalEntry = {
+    step: stocks.step,
+    stockId: stock.id,
+    kind: stock.kind,
+    cause,
+    delta,
+    shortage,
+  };
+  if (counterpart !== undefined) entry.counterpart = counterpart;
+  const { journal } = stocks;
+  journal.entries.push(entry);
+  const excess = journal.entries.length - journal.limit;
+  if (excess <= 0) return;
+  journal.entries.splice(0, excess);
+  journal.dropped += excess;
+};
+
 const stockOf = (stocks: Stocks, id: number): Stock => {
   const stock = stocks.stocks[id];
   if (!stock) throw new Error(`Unknown stock ${id}`);
@@ -77,6 +116,7 @@ export const deposit = (stocks: Stocks, id: number, amount: number): number => {
   stock.available += accepted;
   stock.flow.inflow += accepted;
   stocks.totals[stock.kind].produced += accepted;
+  record(stocks, stock, "production", accepted);
   return accepted;
 };
 
@@ -89,6 +129,7 @@ export const withdraw = (stocks: Stocks, id: number, amount: number): number => 
   stock.flow.outflow += taken;
   stocks.totals[stock.kind].consumed += taken;
   stocks.totals[stock.kind].shortage += amount - taken;
+  record(stocks, stock, "consumption", -taken, amount - taken);
   return taken;
 };
 
@@ -100,6 +141,7 @@ export const lose = (stocks: Stocks, id: number, amount: number): number => {
   stock.available -= lost;
   stock.flow.lost += lost;
   stocks.totals[stock.kind].lost += lost;
+  record(stocks, stock, "loss", -lost);
   return lost;
 };
 
@@ -129,6 +171,7 @@ export const consumeReservation = (stocks: Stocks, reservationId: number): numbe
   stock.available -= reservation.amount;
   stock.flow.outflow += reservation.amount;
   stocks.totals[stock.kind].consumed += reservation.amount;
+  record(stocks, stock, "consumption", -reservation.amount);
   delete stocks.reservations[reservationId];
   return reservation.amount;
 };
@@ -163,7 +206,40 @@ export const transfer = (
   from.flow.outflow += moved;
   to.available += moved;
   to.flow.inflow += moved;
+  record(stocks, from, "transfer", -moved, 0, to.id);
+  record(stocks, to, "transfer", moved, 0, from.id);
   return moved;
+};
+
+export interface CauseFilter {
+  stockId?: number;
+  kind?: ResourceKind;
+  /** Only entries from this step on. */
+  sinceStep?: number;
+}
+
+/** Logged variations matching the filter, oldest first: why a stock moved or ran short. */
+export const causesOf = (stocks: Stocks, filter: CauseFilter = {}): JournalEntry[] =>
+  stocks.journal.entries.filter(
+    (e) =>
+      (filter.stockId === undefined || e.stockId === filter.stockId) &&
+      (filter.kind === undefined || e.kind === filter.kind) &&
+      (filter.sinceStep === undefined || e.step >= filter.sinceStep),
+  );
+
+/** Net variation and shortage per cause, to read a series of entries at a glance. */
+export const sumByCause = (
+  entries: readonly JournalEntry[],
+): Record<Cause, { delta: number; shortage: number }> => {
+  const sums = Object.fromEntries(CAUSES.map((c) => [c, { delta: 0, shortage: 0 }])) as Record<
+    Cause,
+    { delta: number; shortage: number }
+  >;
+  for (const e of entries) {
+    sums[e.cause].delta += e.delta;
+    sums[e.cause].shortage += e.shortage;
+  }
+  return sums;
 };
 
 /** Sum of the quantities present for one kind: a display figure, not the supply of any place. */
@@ -210,7 +286,8 @@ export const verifyStocks = (stocks: Stocks): string[] => {
  */
 export const stocksSystem: System<StocksWorld> = {
   name: "stocks",
-  update({ stocks }) {
+  update({ stocks }, { step }) {
+    stocks.step = step;
     for (const stock of stocks.stocks) {
       if (stock.lossPerStep > 0) lose(stocks, stock.id, stock.lossPerStep);
     }
@@ -219,5 +296,6 @@ export const stocksSystem: System<StocksWorld> = {
     for (const stock of stocks.stocks) {
       stock.flow = { opening: stock.available, inflow: 0, outflow: 0, lost: 0 };
     }
+    stocks.step = step + 1;
   },
 };

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createSimulation, type System } from "../core";
 import {
   addStock,
+  causesOf,
   consumeReservation,
   createStocks,
   deposit,
@@ -9,6 +10,7 @@ import {
   lose,
   releaseReservation,
   reserve,
+  sumByCause,
   stocksSystem,
   totalOf,
   transfer,
@@ -147,5 +149,68 @@ describe("validation", () => {
     const id = addStock(stocks, { node: 0, kind: "water", capacity: 10 });
     expect(() => deposit(stocks, id, 1.5)).toThrow();
     expect(() => reserve(stocks, id, 0)).toThrow();
+  });
+});
+
+describe("cause journal", () => {
+  it("gives a cause to every variation, transfers on both ends", () => {
+    const { stocks } = makeWorld();
+    const a = addStock(stocks, { node: 0, kind: "water", capacity: 100, initial: 50 });
+    const b = addStock(stocks, { node: 1, kind: "water", capacity: 100 });
+    deposit(stocks, a, 10);
+    withdraw(stocks, a, 5);
+    lose(stocks, a, 2);
+    transfer(stocks, a, b, 20);
+    const causes = causesOf(stocks).map((e) => [e.stockId, e.cause, e.delta]);
+    expect(causes).toEqual([
+      [a, "production", 10],
+      [a, "consumption", -5],
+      [a, "loss", -2],
+      [a, "transfer", -20],
+      [b, "transfer", 20],
+    ]);
+    const net = causesOf(stocks, { stockId: a }).reduce((sum, e) => sum + e.delta, 0);
+    expect(net).toBe(stocks.stocks[a]!.available - 50);
+  });
+
+  it("stays bounded and counts what it drops", () => {
+    const { stocks } = { stocks: createStocks(5) };
+    const id = addStock(stocks, { node: 0, kind: "food", capacity: 100 });
+    for (let i = 0; i < 12; i++) deposit(stocks, id, 1);
+    expect(stocks.journal.entries).toHaveLength(5);
+    expect(stocks.journal.dropped).toBe(7);
+    expect(() => createStocks(0)).toThrow();
+  });
+
+  it("traces a shortage back to its causes", () => {
+    const world = makeWorld();
+    const { stocks } = world;
+    const id = addStock(stocks, {
+      node: 0,
+      kind: "water",
+      capacity: 100,
+      initial: 30,
+      lossPerStep: 5,
+    });
+    const draw: System<StocksWorld> = {
+      name: "draw",
+      update: (_, { step }) => {
+        withdraw(stocks, id, 8);
+        if (step === 0) deposit(stocks, id, 4);
+      },
+    };
+    const sim = createSimulation({ seed: 1, state: world, systems: [draw, stocksSystem] });
+    for (let i = 0; i < 5; i++) sim.stepOnce();
+    expect(stocks.stocks[id]!.available).toBe(0);
+    const entries = causesOf(stocks, { stockId: id });
+    const firstShortage = entries.find((e) => e.shortage > 0)!;
+    expect(firstShortage.step).toBe(3);
+    const before = entries.filter((e) => e.step <= firstShortage.step);
+    const sums = sumByCause(before);
+    expect(sums.consumption.delta).toBe(-24);
+    expect(sums.loss.delta).toBe(-10);
+    expect(sums.production.delta).toBe(4);
+    expect(sums.consumption.shortage).toBe(8);
+    expect(stocks.totals.water.shortage).toBe(sumByCause(entries).consumption.shortage);
   });
 });
