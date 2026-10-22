@@ -65,7 +65,8 @@ Sauvegarde (`packages/engine/src/save`) : `serializeSave(sim, config)` (JSON à 
 option `resume`). `formatVersion` = `FORMAT_VERSION` ; migrations `n → n+1` dans `migrate.ts` ; un fichier plus
 récent ou invalide est refusé. Le format v1 contient spatial, habitants, besoins, mouvement, stocks (par nœud, avec réservations),
 profils et affectations de travail (`SaveWorld`) ; les liens du graphe sont dérivés (`buildLinks`), pas sauvés.
-Pas d'E/S dans le moteur : écriture atomique et gzip dans la couche Node qui écrit le fichier.
+Pas d'E/S dans le moteur : `packages/tools` (`writeSaveFile` / `readSaveFile`) écrit le fichier de façon
+atomique (temporaire puis renommage) et en gzip si le nom finit par `.gz`.
 
 ## Décisions
 
