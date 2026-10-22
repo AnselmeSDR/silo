@@ -44,6 +44,9 @@ importers:
 
   packages/render:
     dependencies:
+      '@silo/engine':
+        specifier: workspace:*
+        version: link:../engine
       three:
         specifier: 0.160.0
         version: 0.160.0
