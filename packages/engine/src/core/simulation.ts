@@ -1,5 +1,5 @@
 import { SPEEDS, timeOfStep, type SimTime, type Speed } from "./clock";
-import { createStream, shuffle, type Prng } from "./prng";
+import { createPrngFromState, createStream, shuffle, type Prng, type PrngState } from "./prng";
 
 export interface SystemContext {
   step: number;
@@ -18,6 +18,13 @@ export interface System<S> {
 /** Default cap: 2 s of backlog at x100; beyond it the simulation slows down (D-02). */
 export const DEFAULT_MAX_STEPS_PER_ADVANCE = 200;
 
+/** What a simulation needs, besides its state, to continue exactly where it stopped (D-04). */
+export interface SimulationSnapshot {
+  step: number;
+  /** State of every system stream, by system name. */
+  prng: Record<string, PrngState>;
+}
+
 export interface SimulationOptions<S> {
   seed: bigint | number;
   state: S;
@@ -25,6 +32,8 @@ export interface SimulationOptions<S> {
   systems: readonly System<S>[];
   /** Max steps run by one advance() call; the excess backlog is dropped, never caught up. */
   maxStepsPerAdvance?: number;
+  /** Continues a saved run: step counter and stream states instead of a fresh start. */
+  resume?: SimulationSnapshot;
 }
 
 export interface Simulation<S> {
@@ -32,6 +41,8 @@ export interface Simulation<S> {
   readonly time: SimTime;
   speed: Speed;
   readonly systemOrder: readonly string[];
+  /** Step counter and stream states, to save and pass back as `resume`. */
+  snapshot(): SimulationSnapshot;
   /** Runs exactly one step, whatever the speed. */
   stepOnce(): void;
   /** Feeds real elapsed ms; runs the whole steps due at the current speed, capped by maxStepsPerAdvance. */
@@ -43,14 +54,20 @@ export const createSimulation = <S>({
   state,
   systems,
   maxStepsPerAdvance = DEFAULT_MAX_STEPS_PER_ADVANCE,
+  resume,
 }: SimulationOptions<S>): Simulation<S> => {
   if (!Number.isInteger(maxStepsPerAdvance) || maxStepsPerAdvance < 1) {
     throw new Error("maxStepsPerAdvance must be a positive integer");
   }
   const names = systems.map((s) => s.name);
   if (new Set(names).size !== names.length) throw new Error("Duplicate system name");
-  const streams = new Map(names.map((name) => [name, createStream(seed, name)]));
-  let step = 0;
+  const streams = new Map(
+    names.map((name) => {
+      const saved = resume?.prng[name];
+      return [name, saved ? createPrngFromState(saved) : createStream(seed, name)];
+    }),
+  );
+  let step = resume?.step ?? 0;
   let owed = 0;
 
   const sim: Simulation<S> = {
@@ -59,6 +76,11 @@ export const createSimulation = <S>({
     systemOrder: names,
     get time() {
       return timeOfStep(step);
+    },
+    snapshot() {
+      const prng: Record<string, PrngState> = {};
+      for (const name of names) prng[name] = streams.get(name)!.getState();
+      return { step, prng };
     },
     stepOnce() {
       for (const system of systems) {

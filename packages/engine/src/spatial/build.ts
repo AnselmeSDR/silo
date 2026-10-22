@@ -32,6 +32,16 @@ export const DEFAULT_ROOM_CAPACITY = 2;
 const defaultFunction = (): RoomFunction => "housing";
 const defaultCapacity = (): number => DEFAULT_ROOM_CAPACITY;
 
+/** Derives the half-edges of every node from the edge list. */
+export const buildLinks = (nodeCount: number, edges: readonly Edge[]): Link[][] => {
+  const links: Link[][] = Array.from({ length: nodeCount }, () => []);
+  edges.forEach((edge, i) => {
+    links[edge.from]!.push({ to: edge.to, edge: i, ms: edge.msForward });
+    links[edge.to]!.push({ to: edge.from, edge: i, ms: edge.msBackward });
+  });
+  return links;
+};
+
 export const buildSpatialModel = (options: BuildOptions): SpatialModel => {
   const { levels, arteriesPerLevel } = options;
   if (!Number.isInteger(levels) || levels < 1) throw new Error("levels must be >= 1");
@@ -131,11 +141,12 @@ export const buildSpatialModel = (options: BuildOptions): SpatialModel => {
     });
   }
 
-  const links: Link[][] = nodes.map(() => []);
-  edges.forEach((edge, i) => {
-    links[edge.from]!.push({ to: edge.to, edge: i, ms: edge.msForward });
-    links[edge.to]!.push({ to: edge.from, edge: i, ms: edge.msBackward });
-  });
-
-  return { levels, arteriesPerLevel, nodes, edges, links, revision: 0 };
+  return {
+    levels,
+    arteriesPerLevel,
+    nodes,
+    edges,
+    links: buildLinks(nodes.length, edges),
+    revision: 0,
+  };
 };

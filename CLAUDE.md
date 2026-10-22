@@ -34,6 +34,13 @@ config versionnée (population, topologie, secteurs par niveau/artère, stocks e
 le modèle spatial ; `buildSpatialModel` remplit la capacité de chaque local depuis `roomCapacity` (option, défaut
 `DEFAULT_ROOM_CAPACITY` = 2) ; la population lit `capacity` sur le local.
 
+Sauvegarde (`packages/engine/src/save`) : `serializeSave(sim, config)` (JSON à clés triées, D-04),
+`parseSave(json)` (migre puis valide, `SaveError` listant les problèmes), `loadGame(json, systems)` rend
+`{ simulation, scenario }` qui continue comme la partie ininterrompue (`Simulation.snapshot()` /
+option `resume`). `formatVersion` = `FORMAT_VERSION` ; migrations `n → n+1` dans `migrate.ts` ; un fichier plus
+récent ou invalide est refusé. Les liens du graphe sont dérivés (`buildLinks`), pas sauvés. Pas d'E/S fichier
+dans le moteur (écriture atomique et gzip à la charge de l'appelant).
+
 ## Décisions
 
 `docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
