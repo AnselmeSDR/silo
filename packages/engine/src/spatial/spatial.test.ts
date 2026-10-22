@@ -58,6 +58,38 @@ describe("graph", () => {
     expect(findPath(target, landing(1), landing(0))!.ms).toBe(17_222);
   });
 
+  it("matches D-08 artery: 30 m and ~23 s from the wall to the end", () => {
+    const junction = target.nodes.find(
+      (n) => n.kind === "junction" && n.level === 0 && n.angleDeg === 0,
+    )!;
+    const end = target.nodes.find(
+      (n) => n.kind === "artery" && n.level === 0 && n.artery === 0 && n.index === 5,
+    )!;
+    const path = findPath(target, junction.id, end.id)!;
+    const lengthCm = path.nodes
+      .slice(1)
+      .reduce(
+        (sum, id, i) =>
+          sum +
+          target.edges[target.links[path.nodes[i]!]!.find((l) => l.to === id)!.edge]!.lengthCm,
+        0,
+      );
+    expect(lengthCm).toBe(3000);
+    // 30 m at 1.3 m/s, each edge rounded to the ms.
+    expect(Math.abs(path.ms - 23_077)).toBeLessThanOrEqual(5);
+  });
+
+  it("attaches the first rooms 3 m from the wall", () => {
+    const first = target.nodes.find(
+      (n) => n.kind === "artery" && n.level === 0 && n.artery === 0 && n.index === 0,
+    )!;
+    const edge = target.edges.find((e) => e.kind === "artery" && e.to === first.id)!;
+    expect(edge.lengthCm).toBe(300);
+    expect(target.links[first.id]!.filter((l) => target.nodes[l.to]!.kind === "room")).toHaveLength(
+      2,
+    );
+  });
+
   it("routes between two arteries through the gallery only", () => {
     const from = rooms(target).find((r) => r.level === 0 && r.artery === 0)!;
     const to = rooms(target).find((r) => r.level === 0 && r.artery === 1)!;

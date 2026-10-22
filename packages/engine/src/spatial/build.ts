@@ -14,7 +14,7 @@ import type {
 const STAIR_LEVEL_CM = 1550;
 const WALKWAY_CM = 650;
 const GALLERY_RADIUS_CM = 1525;
-const ARTERY_ENTRY_CM = 300;
+const ARTERY_HALF_MODULE_CM = 300;
 const ARTERY_MODULE_CM = 600;
 const DOOR_CM = 300;
 const MODULES_PER_ARTERY = 5;
@@ -93,13 +93,20 @@ export const buildSpatialModel = (options: BuildOptions): SpatialModel => {
 
     arteryAngles.forEach((angleDeg, artery) => {
       let previous = junctionAt.get(angleDeg)!;
+      // One node per module centre (3 m, then +6 m up to 27 m) serving a room on each side,
+      // then the end of the artery at 30 m.
       for (let index = 0; index <= MODULES_PER_ARTERY; index++) {
-        // Entrance node, then one node per module serving a room on each side.
         const id = nodes.length;
         nodes.push({ id, kind: "artery", level, angleDeg, artery, index });
-        addEdge("artery", previous, id, index === 0 ? ARTERY_ENTRY_CM : ARTERY_MODULE_CM);
+        const isEnd = index === MODULES_PER_ARTERY;
+        addEdge(
+          "artery",
+          previous,
+          id,
+          index === 0 || isEnd ? ARTERY_HALF_MODULE_CM : ARTERY_MODULE_CM,
+        );
         previous = id;
-        if (index === 0) continue;
+        if (isEnd) break;
         for (let side = 0; side < 2; side++) {
           const room: Room = {
             id: nodes.length,
@@ -107,7 +114,7 @@ export const buildSpatialModel = (options: BuildOptions): SpatialModel => {
             level,
             angleDeg,
             artery,
-            function: roomFunction(level, artery, (index - 1) * 2 + side),
+            function: roomFunction(level, artery, index * 2 + side),
             capacity: HOUSING_CAPACITY,
             areaM2: ROOM_AREA_M2,
             access: "open",

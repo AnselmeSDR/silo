@@ -28,7 +28,7 @@ export interface JunctionNode extends BaseNode {
   kind: "junction";
 }
 
-/** Point along an artery; `index` 0 is the entrance at the shaft wall. */
+/** Point along an artery; `index` 0 is the first module (3 m from the wall), the last is the end (30 m). */
 export interface ArteryNode extends BaseNode {
   kind: "artery";
   artery: number;
