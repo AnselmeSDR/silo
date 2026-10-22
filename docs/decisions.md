@@ -1,5 +1,28 @@
 # Décisions techniques
 
+## Index
+
+| ID   | Ticket | Décision en une ligne                                                                    |
+| ---- | ------ | ---------------------------------------------------------------------------------------- |
+| D-01 | SIL-01 | TypeScript partout, web d'abord ; moteur sans DOM (Node + Web Worker), rendu séparé      |
+| D-02 | SIL-02 | Pas fixe d'1 min simulée, ordre mélangé par PRNG, une graine et un flux par système      |
+| D-03 | SIL-03 | Budget : 2 000 habitants, pas moteur ≤ 10 ms (p95), image ≤ 16,6 ms, M2 Pro de référence |
+| D-04 | SIL-04 | Sauvegarde JSON (gzip optionnel), écriture atomique, versionnée, avec journal rejouable  |
+| D-05 | SIL-06 | Style industriel sobre à géométrie simplifiée, caméra, coupe par niveau, masquage        |
+| D-06 | SIL-07 | 1 jour = 1 440 pas, vitesses pause/×1/×10/×100, unités entières, 2 000 habitants fixes   |
+| D-07 | SIL-12 | Prototype jetable : le budget D-03 tient largement (≈ 3 ms/image), moteur réel à mesurer |
+| D-08 | SIL-05 | Cotes de référence du silo (rayons, niveaux, embranchements, temps de trajet)            |
+
+Numérotation par ordre de rédaction, pas par numéro de ticket. D-02 est amendé par D-06 (vitesses, interpolation).
+
+## Décisions encore ouvertes
+
+- **Performance du moteur réel** (D-01, D-03, D-07) : pathfinding, réseaux, mémoires et journal non mesurés ; budget à valider système par système. WebAssembly seulement si un point chaud l'exige.
+- **Rendu** (D-07) : décor réel, coupe, brouillard, interpolation à ×1, Web Worker et autres machines à mesurer avec la vraie scène (étape 1).
+- **Format de sauvegarde** (D-04) : statut « proposée » ; binaire seulement si une mesure l'impose.
+- **Valeurs de départ** (D-06) : consommations d'eau et de nourriture, répartition des âges, à calibrer au prototype.
+- **Empaquetage bureau** (D-01) : Tauri ou Electron non tranché, après la version web.
+
 ## D-01 — Stack du moteur et plateforme cible (SIL-01)
 
 - **Langage et runtime** : TypeScript partout (moteur, rendu, outils). Un seul langage, typage strict pour les 2 000 entités persistantes, et Three.js (§15) est déjà en TypeScript/JavaScript.
@@ -17,7 +40,7 @@ Réf. concept §15.4, §16.2 · ticket SIL-02.
 
 - Pas fixe : **1 pas = 1 minute simulée**. Le pas ne varie jamais (ni selon la vitesse de jeu, ni selon la caméra, ni selon la charge).
 - Échelle à vitesse ×1 : **1 s réelle = 1 pas = 1 min simulée** (1 jour simulé = 24 min réelles).
-- La vitesse de jeu (pause, ×1, ×2, ×4, ×8…) ne change que le nombre de pas exécutés par seconde réelle, jamais la durée d'un pas.
+- La vitesse de jeu (pause, ×1, ×10, ×100, voir D-06) ne change que le nombre de pas exécutés par seconde réelle, jamais la durée d'un pas.
 - Si le matériel ne suit pas, la simulation ralentit (moins de pas par seconde réelle) ; elle ne saute ni n'agrège aucun pas.
 - Le rendu est découplé : il interpole entre deux pas et n'influence aucun calcul.
 
@@ -69,9 +92,9 @@ Les 2 000 entités sont un objectif fonctionnel, pas une preuve : seule la mesur
 
 Réduire d'abord le coût par entité (fréquence de mise à jour par priorité) ; l'objectif de 2 000 entités ne change que sur décision du PO.
 
-## D-SIL-04 — Format de sauvegarde et de journal (§15.5)
+## D-04 — Format de sauvegarde et de journal (SIL-04)
 
-**Statut :** proposée, ticket SIL-04.
+Réf. concept §15.5. Statut : proposée.
 
 ### Format et stockage
 
@@ -118,7 +141,7 @@ JSON : lisible, diffable, migrations simples, plus lourd et plus lent qu'un bina
 
 ## D-05 — Direction visuelle, caméra, coupe et masquage (SIL-06)
 
-Statut : retenue pour l'étape 1, à confirmer par un test de rendu instancié (voir « Réserve »).
+Statut : retenue pour l'étape 1 ; la réserve sur le rendu instancié est levée par D-07.
 
 ### Style retenu
 
@@ -216,7 +239,9 @@ dans ce ticket : le point de départ du ticket est confirmé sur la base des maq
 test de rendu Three.js (instances, coupe, brouillard) doit valider ou ajuster la géométrie simplifiée
 avant la fin de l'étape 1.
 
-## D-SIL-05 — Géométrie du silo (§18.1)
+## D-08 — Géométrie du silo (SIL-05)
+
+Réf. concept §18.1.
 
 Point de départ : `maquettes/silo-escalier-central.html` (illustrative). Les cotes ci-dessous sont
 reprises de la maquette, arrondies, et deviennent les valeurs de référence du modèle spatial.

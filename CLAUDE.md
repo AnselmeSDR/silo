@@ -11,6 +11,18 @@ pnpm workspace TypeScript strict : `packages/engine` (moteur, sans DOM), `packag
 `pnpm dev` (Vite, scène Three.js vide), `pnpm build` (render + engine), `pnpm engine` (moteur sans rendu,
 après build). Three.js figé en version exacte (0.160.0, comme les maquettes).
 
+## Stack et structure
+
+TypeScript strict, pnpm workspace, Three.js 0.160.0 (rendu), Vite (dev). Le moteur (`packages/engine`) n'a
+aucune dépendance au DOM ni à Three.js : Node pour les essais, Web Worker pour le jeu ; le rendu
+(`packages/render`) ne lit que l'état exposé. Pas fixe d'1 min simulée, déterministe (graine + un flux PRNG
+par système), sauvegarde JSON versionnée. Code jetable : dossiers `proto/` (ne pas réutiliser).
+
+## Décisions
+
+`docs/decisions.md` : index D-01 à D-08 (une entrée par décision) et décisions encore ouvertes. À lire avant
+de toucher moteur, rendu, sauvegarde ou unités ; à mettre à jour quand une décision change.
+
 ## Git
 
 Identité `Anselme SDR <anselme8@icloud.com>` (config du dépôt). Dépôts publics, compte AnselmeSDR :
